@@ -25,6 +25,12 @@
     <Filter Include="Source Files\gameboy">
       <UniqueIdentifier>{3d389828-778d-4c53-a767-1d26d02c0031}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\Gameboy">
+      <UniqueIdentifier>{726ba02c-4cf3-46af-be92-705b6ad8acbd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\General Purpose">
+      <UniqueIdentifier>{f05c62aa-0ceb-4e30-8687-34c230c2b7f4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="chip8.h">
@@ -72,5 +78,13 @@
     <None Include="gb.cpp_example">
       <Filter>Header Files\gameboy</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="GB-info.txt">
+      <Filter>Resource Files\Gameboy</Filter>
+    </Text>
+    <Text Include="Info.txt">
+      <Filter>Resource Files\General Purpose</Filter>
+    </Text>
   </ItemGroup>
 </Project>

@@ -1,0 +1,5 @@
+EMU BOOK:
+http://web.archive.org/web/20060107221912/http://www.zenogais.net/projects/tutorials/
+
+OPCode optimilisation: (tables)
+http://www.multigesture.net/wp-content/uploads/mirror/zenogais/FunctionPointers.htm

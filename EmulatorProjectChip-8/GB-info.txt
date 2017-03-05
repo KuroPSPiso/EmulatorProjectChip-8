@@ -1,0 +1,5 @@
+Gameboy CPU-manual:
+http://marc.rawer.de/Gameboy/Docs/GBCPUman.pdf
+
+Z80 datasheet:
+http://zilog.com/appnotes_download.php?FromPage=DirectLink&dn=UM0080&ft=User%20Manual&f=YUhSMGNEb3ZMM2QzZHk1NmFXeHZaeTVqYjIwdlpHOWpjeTk2T0RBdlZVMHdNRGd3TG5Ca1pnPT0=
