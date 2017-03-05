@@ -4,6 +4,8 @@
 #include "stdint.h"
 #include <iostream>
 
+typedef int(Gameboy::*method_ptr);
+
 class Gameboy {
 public:
 #pragma region CPU registers and memory bus
@@ -125,6 +127,115 @@ private:
 	uint8_t Gameboy::decodeOPCode(const uint8_t &opcode);
 	uint8_t Gameboy::decodeOPCodeI__d(const uint8_t &opcode, uint16_t index); //IX+d / IY+d
 	uint8_t Gameboy::PUSH(const uint16_t &qq);
+	void Gameboy::InitilizeOpCodeTable();
+
+	method_ptr gbOpCodeTable[0xFF] = {};
+
+	//?
+	int NOP();
+	//LD_r_r
+	int LD_A_A();
+	int LD_A_B();
+	int LD_A_C();
+	int LD_A_D();
+	int LD_A_E();
+	int LD_A_H();
+	int LD_A_L();
+	int LD_B_A();
+	int LD_B_B();
+	int LD_B_C();
+	int LD_B_D();
+	int LD_B_E();
+	int LD_B_H();
+	int LD_B_L();
+	int LD_C_A();
+	int LD_C_B();
+	int LD_C_C();
+	int LD_C_D();
+	int LD_C_E();
+	int LD_C_H();
+	int LD_C_L();
+	int LD_D_A();
+	int LD_D_B();
+	int LD_D_C();
+	int LD_D_D();
+	int LD_D_E();
+	int LD_D_H();
+	int LD_D_L();
+	int LD_E_A();
+	int LD_E_B();
+	int LD_E_C();
+	int LD_E_D();
+	int LD_E_E();
+	int LD_E_H();
+	int LD_E_L();
+	int LD_H_A();
+	int LD_H_B();
+	int LD_H_C();
+	int LD_H_D();
+	int LD_H_E();
+	int LD_H_H();
+	int LD_H_L();
+	int LD_L_A();
+	int LD_L_B();
+	int LD_L_C();
+	int LD_L_D();
+	int LD_L_E();
+	int LD_L_H();
+	int LD_L_L();
+	//LD_r_n
+	int LD_A_n();
+	int LD_B_n();
+	int LD_C_n();
+	int LD_D_n();
+	int LD_E_n();
+	int LD_H_n();
+	int LD_L_n();
+	//LD_r_(HL)
+	int LD_A_HL();
+	int LD_B_HL();
+	int LD_C_HL();
+	int LD_D_HL();
+	int LD_E_HL();
+	int LD_H_HL();
+	int LD_L_HL();
+	//LD_(HL)_r
+	int LD_HL_A();
+	int LD_HL_B();
+	int LD_HL_C();
+	int LD_HL_D();
+	int LD_HL_E();
+	int LD_HL_H();
+	int LD_HL_L();
+	int LD_HL_n();
+	//misc A get-set
+	int LD_nn_A();
+	int LD_BC_A();
+	int LD_DE_A();
+	int LD_A_BC();
+	int LD_A_DE();
+
+	//LD_r_(nn)
+	int LD_A_nn();
+	int LD_HL_nn();
+
+	//StackPointer
+	int LD_SP_HL();
+
+	//Custom NonZ80 opcodes
+	int LDD_A_HL();
+	int LDD_HL_A();
+	int LDI_A_HL();
+	int LDI_HL_A();
+	int LDH_FF00_PLUS_n_A();
+	int LDH_A_FF00_PLUS_n();
+	int LD_A_FF00_PLUS_C();
+	int LD_FF00_PLUS_C_A();
+
+	//IndexPointer (Not implemented in the gameboy system architecture)
+	int LD_I();
+	int LD_r_IX_PLUS_d();
+	int LD_r_IY_PLUS_d();
 };
 
 #endif // !CHIP8_H_

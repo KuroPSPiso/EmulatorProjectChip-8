@@ -35,415 +35,615 @@ uint8_t Gameboy::fetch()
 	return data;
 }
 
-uint8_t Gameboy::decodeOPCode(const uint8_t & opcode)
+/*0x00*/
+int Gameboy::NOP()
+{
+	//No Operation Protocol
+	return 0;
+}
+
+/*0x7F*/
+int Gameboy::LD_A_A()
+{
+	cpuRegistery.registery.A = cpuRegistery.registery.A;
+	return 4;
+}
+/*0X78*/
+int Gameboy::LD_A_B()
+{
+	cpuRegistery.registery.A = cpuRegistery.registery.B;
+	return 4;
+}
+/*0X79*/
+int Gameboy::LD_A_C()
+{
+	cpuRegistery.registery.A = cpuRegistery.registery.C;
+	return 4;
+}
+/*0X7A*/
+int Gameboy::LD_A_D()
+{
+	cpuRegistery.registery.A = cpuRegistery.registery.D;
+	return 4;
+}
+/*0X7B*/
+int Gameboy::LD_A_E()
+{
+	cpuRegistery.registery.A = cpuRegistery.registery.E;
+	return 4;
+}
+/*0X7C*/
+int Gameboy::LD_A_H()
+{
+	cpuRegistery.registery.A = cpuRegistery.registery.H;
+	return 4;
+}
+/*0X7D*/
+int Gameboy::LD_A_L()
+{
+	cpuRegistery.registery.A = cpuRegistery.registery.L;
+	return 4;
+}
+
+/*0x47*/
+int Gameboy::LD_B_A()
+{
+	cpuRegistery.registery.B = cpuRegistery.registery.A;
+	return 4;
+}
+/*0x40*/
+int Gameboy::LD_B_B()
+{
+	cpuRegistery.registery.B = cpuRegistery.registery.B;
+	return 4;
+}
+/*0x41*/
+int Gameboy::LD_B_C()
+{
+	cpuRegistery.registery.B = cpuRegistery.registery.C;
+	return 4;
+}
+/*0x42*/
+int Gameboy::LD_B_D()
+{
+	cpuRegistery.registery.B = cpuRegistery.registery.D;
+	return 4;
+}
+/*0x43*/
+int Gameboy::LD_B_E()
+{
+	cpuRegistery.registery.B = cpuRegistery.registery.E;
+	return 4;
+}
+/*0x44*/
+int Gameboy::LD_B_H()
+{
+	cpuRegistery.registery.B = cpuRegistery.registery.H;
+	return 4;
+}
+/*0x45*/
+int Gameboy::LD_B_L()
+{
+	cpuRegistery.registery.B = cpuRegistery.registery.L;
+	return 4;
+}
+
+/*0x4F*/
+int Gameboy::LD_C_A()
+{
+	cpuRegistery.registery.C = cpuRegistery.registery.A;
+	return 4;
+}
+/*0X48*/
+int Gameboy::LD_C_B()
+{
+	cpuRegistery.registery.C = cpuRegistery.registery.B;
+	return 4;
+}
+/*0X49*/
+int Gameboy::LD_C_C()
+{
+	cpuRegistery.registery.C = cpuRegistery.registery.C;
+	return 4;
+}
+/*0X4A*/
+int Gameboy::LD_C_D()
+{
+	cpuRegistery.registery.C = cpuRegistery.registery.D;
+	return 4;
+}
+/*0X4B*/
+int Gameboy::LD_C_E()
+{
+	cpuRegistery.registery.C = cpuRegistery.registery.E;
+	return 4;
+}
+/*0X4C*/
+int Gameboy::LD_C_H()
+{
+	cpuRegistery.registery.C = cpuRegistery.registery.H;
+	return 4;
+}
+/*0X4D*/
+int Gameboy::LD_C_L()
+{
+	cpuRegistery.registery.C = cpuRegistery.registery.L;
+	return 4;
+}
+
+/*0x57*/
+int Gameboy::LD_D_A()
+{
+	cpuRegistery.registery.D = cpuRegistery.registery.A;
+	return 4;
+}
+/*0x50*/
+int Gameboy::LD_D_B()
+{
+	cpuRegistery.registery.D = cpuRegistery.registery.B;
+	return 4;
+}
+/*0x51*/
+int Gameboy::LD_D_C()
+{
+	cpuRegistery.registery.D = cpuRegistery.registery.C;
+	return 4;
+}
+/*0x52*/
+int Gameboy::LD_D_D()
+{
+	cpuRegistery.registery.D = cpuRegistery.registery.D;
+	return 4;
+}
+/*0x53*/
+int Gameboy::LD_D_E()
+{
+	cpuRegistery.registery.D = cpuRegistery.registery.E;
+	return 4;
+}
+/*0x54*/
+int Gameboy::LD_D_H()
+{
+	cpuRegistery.registery.D = cpuRegistery.registery.H;
+	return 4;
+}
+/*0x55*/
+int Gameboy::LD_D_L()
+{
+	cpuRegistery.registery.D = cpuRegistery.registery.L;
+	return 4;
+}
+
+/*0x5F*/
+int Gameboy::LD_E_A()
+{
+	cpuRegistery.registery.E = cpuRegistery.registery.A;
+	return 4;
+}
+/*0X58*/
+int Gameboy::LD_E_B()
+{
+	cpuRegistery.registery.E = cpuRegistery.registery.B;
+	return 4;
+}
+/*0X59*/
+int Gameboy::LD_E_C()
+{
+	cpuRegistery.registery.E = cpuRegistery.registery.C;
+	return 4;
+}
+/*0X5A*/
+int Gameboy::LD_E_D()
+{
+	cpuRegistery.registery.E = cpuRegistery.registery.D;
+	return 4;
+}
+/*0X5B*/
+int Gameboy::LD_E_E()
+{
+	cpuRegistery.registery.E = cpuRegistery.registery.E;
+	return 4;
+}
+/*0X5C*/
+int Gameboy::LD_E_H()
+{
+	cpuRegistery.registery.E = cpuRegistery.registery.H;
+	return 4;
+}
+/*0X5D*/
+int Gameboy::LD_E_L()
+{
+	cpuRegistery.registery.E = cpuRegistery.registery.L;
+	return 4;
+}
+
+/*0x67*/
+int Gameboy::LD_H_A()
+{
+	cpuRegistery.registery.H = cpuRegistery.registery.A;
+	return 4;
+}
+/*0x60*/
+int Gameboy::LD_H_B()
+{
+	cpuRegistery.registery.H = cpuRegistery.registery.B;
+	return 4;
+}
+/*0x61*/
+int Gameboy::LD_H_C()
+{
+	cpuRegistery.registery.H = cpuRegistery.registery.C;
+	return 4;
+}
+/*0x62*/
+int Gameboy::LD_H_D()
+{
+	cpuRegistery.registery.H = cpuRegistery.registery.D;
+	return 4;
+}
+/*0x63*/
+int Gameboy::LD_H_E()
+{
+	cpuRegistery.registery.H = cpuRegistery.registery.E;
+	return 4;
+}
+/*0x64*/
+int Gameboy::LD_H_H()
+{
+	cpuRegistery.registery.H = cpuRegistery.registery.H;
+	return 4;
+}
+/*0x65*/
+int Gameboy::LD_H_L()
+{
+	cpuRegistery.registery.H = cpuRegistery.registery.L;
+	return 4;
+}
+
+/*0x6F*/
+int Gameboy::LD_L_A()
+{
+	cpuRegistery.registery.L = cpuRegistery.registery.A;
+	return 4;
+}
+/*0X68*/
+int Gameboy::LD_L_B()
+{
+	cpuRegistery.registery.L = cpuRegistery.registery.B;
+	return 4;
+}
+/*0X69*/
+int Gameboy::LD_L_C()
+{
+	cpuRegistery.registery.L = cpuRegistery.registery.C;
+	return 4;
+}
+/*0X6A*/
+int Gameboy::LD_L_D()
+{
+	cpuRegistery.registery.L = cpuRegistery.registery.D;
+	return 4;
+}
+/*0X6B*/
+int Gameboy::LD_L_E()
+{
+	cpuRegistery.registery.L = cpuRegistery.registery.E;
+	return 4;
+}
+/*0X6C*/
+int Gameboy::LD_L_H()
+{
+	cpuRegistery.registery.L = cpuRegistery.registery.H;
+	return 4;
+}
+/*0X6D*/
+int Gameboy::LD_L_L()
+{
+	cpuRegistery.registery.L = cpuRegistery.registery.L;
+	return 4;
+}
+/*0x3E*/
+int Gameboy::LD_A_n()
+{
+	uint8_t n = fetch();
+	cpuRegistery.registery.A = n;
+	return 8;
+}
+/*0x06*/
+int Gameboy::LD_B_n()
+{
+	uint8_t n = fetch();
+	cpuRegistery.registery.B = n;
+	return 8;
+}
+/*0x0E*/
+int Gameboy::LD_C_n()
+{
+	uint8_t n = fetch();
+	cpuRegistery.registery.C = n;
+	return 8;
+}
+/*0x16*/
+int Gameboy::LD_D_n()
+{
+	uint8_t n = fetch();
+	cpuRegistery.registery.D = n;
+	return 8;
+}
+/*0x1E*/
+int Gameboy::LD_E_n()
+{
+	uint8_t n = fetch();
+	cpuRegistery.registery.E = n;
+	return 8;
+}
+/*0x26*/
+int Gameboy::LD_H_n()
+{
+	uint8_t n = fetch();
+	cpuRegistery.registery.H = n;
+	return 8;
+}
+/*0x2E*/
+int Gameboy::LD_L_n()
+{
+	uint8_t n = fetch();
+	cpuRegistery.registery.L = n;
+	return 8;
+}
+/*0x7E*/
+int Gameboy::LD_A_HL()
+{
+	uint8_t readVal = read(cpuRegistery.registery.HL);
+	cpuRegistery.registery.A = readVal;
+	return 8;
+}
+/*0x46*/
+int Gameboy::LD_B_HL()
+{
+	uint8_t readVal = read(cpuRegistery.registery.HL);
+	cpuRegistery.registery.B = readVal;
+	return 8;
+}
+/*0x4E*/
+int Gameboy::LD_C_HL()
+{
+	uint8_t readVal = read(cpuRegistery.registery.HL);
+	cpuRegistery.registery.C = readVal;
+	return 8;
+}
+/*0x56*/
+int Gameboy::LD_D_HL()
+{
+	uint8_t readVal = read(cpuRegistery.registery.HL);
+	cpuRegistery.registery.D = readVal;
+	return 8;
+}
+/*0x5E*/
+int Gameboy::LD_E_HL()
+{
+	uint8_t readVal = read(cpuRegistery.registery.HL);
+	cpuRegistery.registery.E = readVal;
+	return 8;
+}
+/*0x66*/
+int Gameboy::LD_H_HL()
+{
+	uint8_t readVal = read(cpuRegistery.registery.HL);
+	cpuRegistery.registery.H = readVal;
+	return 8;
+}
+/*0x6E*/
+int Gameboy::LD_L_HL()
+{
+	uint8_t readVal = read(cpuRegistery.registery.HL);
+	cpuRegistery.registery.L = readVal;
+	return 8;
+}
+/*0x77*/
+int Gameboy::LD_HL_A()
+{
+	write(cpuRegistery.registery.HL, cpuRegistery.registery.A);
+	return 8;
+}
+/*0x70*/
+int Gameboy::LD_HL_B()
+{
+	write(cpuRegistery.registery.HL, cpuRegistery.registery.B);
+	return 8;
+}
+/*0x71*/
+int Gameboy::LD_HL_C()
+{
+	write(cpuRegistery.registery.HL, cpuRegistery.registery.C);
+	return 8;
+}
+/*0x72*/
+int Gameboy::LD_HL_D()
+{
+	write(cpuRegistery.registery.HL, cpuRegistery.registery.D);
+	return 8;
+}
+/*0x73*/
+int Gameboy::LD_HL_E()
+{
+	write(cpuRegistery.registery.HL, cpuRegistery.registery.E);
+	return 8;
+}
+/*0x74*/
+int Gameboy::LD_HL_H()
+{
+	write(cpuRegistery.registery.HL, cpuRegistery.registery.H);
+	return 8;
+}
+/*0x75*/
+int Gameboy::LD_HL_L()
+{
+	write(cpuRegistery.registery.HL, cpuRegistery.registery.L);
+	return 8;
+}
+/*0x36*/
+int Gameboy::LD_HL_n()
+{
+	uint8_t n = fetch();
+	write(cpuRegistery.registery.HL, n);
+	return 12;
+}
+
+/*0xEA*/
+int Gameboy::LD_nn_A()
+{
+	//TODO: check result of n;
+
+	uint8_t n = read(fetch());
+	write(n, cpuRegistery.registery.A);
+	return 16;
+}
+/*0x02*/
+int Gameboy::LD_BC_A()
+{
+	cpuRegistery.registery.BC = cpuRegistery.registery.A;
+	return 8;
+}
+/*0x12*/
+int Gameboy::LD_DE_A()
+{
+	cpuRegistery.registery.DE = cpuRegistery.registery.A;
+	return 8;
+}
+/*0x0A*/
+int Gameboy::LD_A_BC()
+{
+	uint8_t readVal = read(cpuRegistery.registery.BC);
+	cpuRegistery.registery.E = readVal;
+	return 8;
+}
+/*0x1A*/
+int Gameboy::LD_A_DE()
+{
+	uint8_t readVal = read(cpuRegistery.registery.DE);
+	cpuRegistery.registery.H = readVal;
+	return 8;
+}
+/*0xFA*/
+int Gameboy::LD_A_nn()
+{
+	uint8_t n = read(fetch());
+	cpuRegistery.registery.A = n;
+	return 16;
+}
+/*0x2A*/
+int Gameboy::LD_HL_nn()
+{
+	uint8_t n = read(fetch());
+	cpuRegistery.registery.H = n + 1;
+	cpuRegistery.registery.L = n;
+	return 16;
+}
+/*0xF9*/
+int Gameboy::LD_SP_HL()
+{
+	cpuRegistery.sp = read(cpuRegistery.registery.HL);
+	return 8;
+}
+
+
+#pragma region Custom OpCodes
+/*0xF2*/
+int Gameboy::LD_A_FF00_PLUS_C()
+{
+	cpuRegistery.registery.A = read(0xFF00 + cpuRegistery.registery.C); //read due to uint16_t to uint8_t
+	return 8;
+}
+/*0xE2*/
+int Gameboy::LD_FF00_PLUS_C_A()
+{
+	write(0xFF00 + cpuRegistery.registery.C, cpuRegistery.registery.A);
+	return 8;
+}
+
+/*0x3A*/
+int Gameboy::LDD_A_HL()
+{
+	cpuRegistery.registery.A = read(cpuRegistery.registery.HL);
+	cpuRegistery.registery.HL -= 0x01;
+	return 8;
+}
+/*0x32*/
+int Gameboy::LDD_HL_A()
+{
+	write(cpuRegistery.registery.HL, cpuRegistery.registery.A);
+	cpuRegistery.registery.HL -= 0x01;
+	return 8;
+}
+/*0x2A*/
+int Gameboy::LDI_A_HL()
+{
+	cpuRegistery.registery.A = read(cpuRegistery.registery.HL);
+	cpuRegistery.registery.HL += 0x01;
+	return 8;
+}
+/*0x22*/
+int Gameboy::LDI_HL_A()
+{
+	write(cpuRegistery.registery.HL, cpuRegistery.registery.A);
+	cpuRegistery.registery.HL += 0x01;
+	return 8;
+}
+/*0xE0*/
+int Gameboy::LDH_FF00_PLUS_n_A()
+{
+	uint8_t n = fetch();
+	write(0xFF00 + n, cpuRegistery.registery.A);
+	return 12;
+}
+/*0xF0*/
+int Gameboy::LDH_A_FF00_PLUS_n()
+{
+	uint8_t n = fetch();
+	cpuRegistery.registery.A = read(0xFF00 + n);
+	return 12;
+}
+#pragma endregion Custom OpCodes
+
+#pragma region deleted OpCodes
+//INDEX
+/*0xED*/
+int Gameboy::LD_I()
+{
+	//Index is not implemented in Gameboys Z80 like cpu.
+	return 0; //default 20
+}
+/*0xDD*/
+int Gameboy::LD_r_IX_PLUS_d()
+{
+	uint8_t subOpCode = fetch();
+	return decodeOPCodeI__d(subOpCode, cpuRegistery.index.IX);
+}
+/*0xFD*/
+int Gameboy::LD_r_IY_PLUS_d()
+{
+	uint8_t subOpCode = fetch();
+	return decodeOPCodeI__d(subOpCode, cpuRegistery.index.IY);
+}
+#pragma endregion deleted OpCodes
+
+
+uint8_t Gameboy::decodeOPCode(const uint8_t &opcode)
 {
 
 	uint8_t tickStates = 0; 
 	uint8_t n, readVal, subOpCode = NULL;
-
-	switch (opcode)
-	{
-	case 0x00: //NOP
-		break;
-
-//Operation 8-Bit Load Group
-	//Operation LD r, r'
-	case 0x7F: //+LD AA
-		cpuRegistery.registery.A = cpuRegistery.registery.A;
-		tickStates = 4;
-		break;
-	case 0x78: //+LD AB
-		cpuRegistery.registery.A = cpuRegistery.registery.B;
-		tickStates = 4;
-		break;
-	case 0x79: //+LD AC
-		cpuRegistery.registery.A = cpuRegistery.registery.C;
-		tickStates = 4;
-		break;
-	case 0x7A: //+LD AD
-		cpuRegistery.registery.A = cpuRegistery.registery.D;
-		tickStates = 4;
-		break;
-	case 0x7B: //+LD AE
-		cpuRegistery.registery.A = cpuRegistery.registery.E;
-		tickStates = 4;
-		break;
-	case 0x7C: //+LD AH
-		cpuRegistery.registery.A = cpuRegistery.registery.H;
-		tickStates = 4;
-		break;
-	case 0x7D: //+LD AL
-		cpuRegistery.registery.A = cpuRegistery.registery.L;
-		tickStates = 4;
-		break;
-
-	case 0x47: //+LD BA
-		cpuRegistery.registery.B = cpuRegistery.registery.A;
-		tickStates = 4;
-		break;
-	case 0x40: //+LD BB
-		cpuRegistery.registery.B = cpuRegistery.registery.B;
-		tickStates = 4;
-		break;
-	case 0x41: //+LD BC
-		cpuRegistery.registery.B = cpuRegistery.registery.C;
-		tickStates = 4;
-		break;
-	case 0x42: //+LD BD
-		cpuRegistery.registery.B = cpuRegistery.registery.D;
-		tickStates = 4;
-		break;
-	case 0x43: //+LD BE
-		cpuRegistery.registery.B = cpuRegistery.registery.E;
-		tickStates = 4;
-		break;
-	case 0x44: //+LD BH
-		cpuRegistery.registery.B = cpuRegistery.registery.H;
-		tickStates = 4;
-		break;
-	case 0x45: //+LD BL
-		cpuRegistery.registery.B = cpuRegistery.registery.L;
-		tickStates = 4;
-		break;
-
-	case 0x4F: //+LD CA
-		cpuRegistery.registery.C = cpuRegistery.registery.A;
-		tickStates = 4;
-		break;
-	case 0x48: //+LD CB
-		cpuRegistery.registery.C = cpuRegistery.registery.B;
-		tickStates = 4;
-		break;
-	case 0x49: //+LD CC
-		cpuRegistery.registery.C = cpuRegistery.registery.C;
-		tickStates = 4;
-		break;
-	case 0x4A: //+LD CD
-		cpuRegistery.registery.C = cpuRegistery.registery.D;
-		tickStates = 4;
-		break;
-	case 0x4B: //+LD CE
-		cpuRegistery.registery.C = cpuRegistery.registery.E;
-		tickStates = 4;
-		break;
-	case 0X4C: //+LD CH
-		cpuRegistery.registery.C = cpuRegistery.registery.H;
-		tickStates = 4;
-		break;
-	case 0X4D: //+LD CL
-		cpuRegistery.registery.C = cpuRegistery.registery.L;
-		tickStates = 4;
-		break;
-
-	case 0x57: //+LD DA
-		cpuRegistery.registery.D = cpuRegistery.registery.A;
-		tickStates = 4;
-		break;
-	case 0x50: //+LD DB
-		cpuRegistery.registery.D = cpuRegistery.registery.B;
-		tickStates = 4;
-		break;
-	case 0x51: //+LD DC
-		cpuRegistery.registery.D = cpuRegistery.registery.C;
-		tickStates = 4;
-		break;
-	case 0x52: //+LD DD
-		cpuRegistery.registery.D = cpuRegistery.registery.D;
-		tickStates = 4;
-		break;
-	case 0x53: //+LD DE
-		cpuRegistery.registery.D = cpuRegistery.registery.E;
-		tickStates = 4;
-		break;
-	case 0x54: //+LD DH
-		cpuRegistery.registery.D = cpuRegistery.registery.H;
-		tickStates = 4;
-		break;
-	case 0x55: //+LD DL
-		cpuRegistery.registery.D = cpuRegistery.registery.L;
-		tickStates = 4;
-		break;
-
-	case 0x5F: //+LD EA
-		cpuRegistery.registery.E = cpuRegistery.registery.A;
-		tickStates = 4;
-		break;
-	case 0x58: //+LD EB
-		cpuRegistery.registery.E = cpuRegistery.registery.B;
-		tickStates = 4;
-		break;
-	case 0x59: //+LD EC
-		cpuRegistery.registery.E = cpuRegistery.registery.C;
-		tickStates = 4;
-		break;
-	case 0x5A: //+LD ED
-		cpuRegistery.registery.E = cpuRegistery.registery.D;
-		tickStates = 4;
-		break;
-	case 0x5B: //+LD EE
-		cpuRegistery.registery.E = cpuRegistery.registery.E;
-		tickStates = 4;
-		break;
-	case 0x5C: //+LD EH
-		cpuRegistery.registery.E = cpuRegistery.registery.H;
-		tickStates = 4;
-		break;
-	case 0x5D: //+LD EL
-		cpuRegistery.registery.E = cpuRegistery.registery.L;
-		tickStates = 4;
-		break;
-
-	case 0x67: //+LD HA
-		cpuRegistery.registery.H = cpuRegistery.registery.A;
-		tickStates = 4;
-		break;
-	case 0x60: //+LD HB
-		cpuRegistery.registery.H = cpuRegistery.registery.B;
-		tickStates = 4;
-		break;
-	case 0x61: //+LD HC
-		cpuRegistery.registery.H = cpuRegistery.registery.C;
-		tickStates = 4;
-		break;
-	case 0x62: //+LD HD
-		cpuRegistery.registery.H = cpuRegistery.registery.D;
-		tickStates = 4;
-		break;
-	case 0x63: //+LD HE
-		cpuRegistery.registery.H = cpuRegistery.registery.E;
-		tickStates = 4;
-		break;
-	case 0x64: //+LD HH
-		cpuRegistery.registery.H = cpuRegistery.registery.H;
-		tickStates = 4;
-		break;
-	case 0x65: //+LD HL
-		cpuRegistery.registery.H = cpuRegistery.registery.L;
-		tickStates = 4;
-		break;
-
-	case 0x6F: //+LD LA
-		cpuRegistery.registery.L = cpuRegistery.registery.A;
-		tickStates = 4;
-		break;
-	case 0x68: //+LD LB
-		cpuRegistery.registery.L = cpuRegistery.registery.B;
-		tickStates = 4;
-		break;
-	case 0x69: //+LD LC
-		cpuRegistery.registery.L = cpuRegistery.registery.C;
-		tickStates = 4;
-		break;
-	case 0x6A: //+LD LD
-		cpuRegistery.registery.L = cpuRegistery.registery.D;
-		tickStates = 4;
-		break;
-	case 0x6B: //+LD LE
-		cpuRegistery.registery.L = cpuRegistery.registery.E;
-		tickStates = 4;
-		break;
-	case 0x6C: //+LD LH
-		cpuRegistery.registery.L = cpuRegistery.registery.H;
-		tickStates = 4;
-		break;
-	case 0x6D: //+LD LL
-		cpuRegistery.registery.L = cpuRegistery.registery.L;
-		tickStates = 4;
-		break;
-
-	//Operation LD r, n
-	case 0x3E: //+LDAnA(#)
-		n = fetch();
-		cpuRegistery.registery.A = n;
-		tickStates = 7;
-		break;
-	case 0x06: //#LD(nn)n_Bn
-		n = fetch();
-		cpuRegistery.registery.B = n;
-		tickStates = 8;
-		break;
-	case 0x0E: //#LD(nn)n_Cn
-		n = fetch();
-		cpuRegistery.registery.C = n;
-		tickStates = 8;
-		break;
-	case 0x16: //#LD(nn)n_Dn
-		n = fetch();
-		cpuRegistery.registery.D = n;
-		tickStates = 8;
-		break;
-	case 0x1E: //#LD(nn)n_En
-		n = fetch();
-		cpuRegistery.registery.E = n;
-		tickStates = 8;
-		break;
-	case 0x26: //#LD(nn)n_Hn
-		n = fetch();
-		cpuRegistery.registery.H = n;
-		tickStates = 8;
-		break;
-	case 0x2E: //#LD(nn)n_Ln
-		n = fetch();
-		cpuRegistery.registery.L = n;
-		tickStates = 8;
-		break;
-
-	//Operation LD r, (HL)
-	case 0x7E: //+LDAnA(HL)
-		readVal = read(cpuRegistery.registery.HL);
-		cpuRegistery.registery.A = readVal;
-		tickStates = 7;
-		break;
-	case 0x46: //+LDR(HL)_B(HL)
-		readVal = read(cpuRegistery.registery.HL);
-		cpuRegistery.registery.B = readVal;
-		tickStates = 7;
-		break;
-	case 0x4E: //+LDR(HL)_C(HL)
-		readVal = read(cpuRegistery.registery.HL);
-		cpuRegistery.registery.C = readVal;
-		tickStates = 7;
-		break;
-	case 0x56: //+LDR(HL)_D(HL)
-		readVal = read(cpuRegistery.registery.HL);
-		cpuRegistery.registery.D = readVal;
-		tickStates = 7;
-		break;
-	case 0x5E: //+LDR(HL)_E(HL)
-		readVal = read(cpuRegistery.registery.HL);
-		cpuRegistery.registery.E = readVal;
-		tickStates = 7;
-		break;
-	case 0x66: //+LDR(HL)_H(HL)
-		readVal = read(cpuRegistery.registery.HL);
-		cpuRegistery.registery.H = readVal;
-		tickStates = 7;
-		break;
-	case 0x6E: //+LDR(HL)_L(HL)
-		readVal = read(cpuRegistery.registery.HL);
-		cpuRegistery.registery.L = readVal;
-		tickStates = 7;
-		break;
-
-	//Operation LD (HL), r
-	case 0x77: //+LDnA(HL)A
-		write(cpuRegistery.registery.HL, cpuRegistery.registery.A);
-		tickStates = 7;
-		break;
-	case 0x70: //+LD(HL)R_(HL)B
-		write(cpuRegistery.registery.HL, cpuRegistery.registery.B);
-		tickStates = 7;
-		break;
-	case 0x71: //+LD(HL)R_(HL)C
-		write(cpuRegistery.registery.HL, cpuRegistery.registery.C);
-		tickStates = 7;
-		break;
-	case 0x72: //+LD(HL)R_(HL)D
-		write(cpuRegistery.registery.HL, cpuRegistery.registery.D);
-		tickStates = 7;
-		break;
-	case 0x73: //+LD(HL)R_(HL)E
-		write(cpuRegistery.registery.HL, cpuRegistery.registery.E);
-		tickStates = 7;
-		break;
-	case 0x74: //+LD(HL)R_(HL)H
-		write(cpuRegistery.registery.HL, cpuRegistery.registery.H);
-		tickStates = 7;
-		break;
-	case 0x75: //+LD(HL)R_(HL)L
-		write(cpuRegistery.registery.HL, cpuRegistery.registery.L);
-		tickStates = 7;
-		break;
-	case 0x36: //#LD(HL)R_(HL)n
-		n = fetch();
-		write(cpuRegistery.registery.HL, n);
-		tickStates = 10;
-		break;
-
-	//Operation LD A, (nn)
-	case 0x3A:
-		n = read(fetch());
-		cpuRegistery.registery.A = n;
-		tickStates = 4;
-		break;
-	case 0x02: //+LDnA(BC)A
-		cpuRegistery.registery.BC = cpuRegistery.registery.A;
-		tickStates = 8;
-		break;
-	case 0x12: //+LDnA(DE)A
-		cpuRegistery.registery.DE = cpuRegistery.registery.A;
-		tickStates = 8;
-		break;
-	case 0xEA: //+LDnA(nn)A
-		tickStates = 16;
-		break;
-	case 0x0A: //+LDAnA(BC)
-		readVal = read(cpuRegistery.registery.BC);
-		cpuRegistery.registery.A = readVal;
-		tickStates = 7;
-		break;
-	case 0x1A: //+LDAnA(DE)
-		readVal = read(cpuRegistery.registery.DE);
-		cpuRegistery.registery.A = readVal;
-		tickStates = 7;
-		break;
-	case 0xFA: //+LDAnA(nn)
-		n = read(fetch());
-		cpuRegistery.registery.A = n;
-		tickStates = 13;
-		break;
-	case 0x2A: //+LDHL(nn)
-		n = read(fetch());
-		cpuRegistery.registery.H = n + 1;
-		cpuRegistery.registery.L = n;
-		tickStates = 16;
-		break;
-	case 0xED:
-
-		tickStates = 20;
-		break;
-	//Operation LD SP,HL
-	case 0xF9:
-		cpuRegistery.sp = read(cpuRegistery.registery.HL);
-		tickStates = 6;
-		break;
-#pragma region deleted OpCodes
-	//Operation LD r, (IX+d)
-	case 0xDD:
-		subOpCode = fetch();
-		tickStates = decodeOPCodeI__d(subOpCode, cpuRegistery.index.IX);
-		break;
-	case 0xFD:
-		subOpCode = fetch();
-		tickStates = decodeOPCodeI__d(subOpCode, cpuRegistery.index.IY);
-		break;
-	//Operation LD IX, nn
-	case 0xDD & 0x21:
-		tickStates = 14;
-		break;
-	//Operation LD IY, nn
-	case 0xFD & 0x21:
-		tickStates = 14;
-		break;
-	//Operation LD IX, nn
-	case 0xDD & 0x2A:
-		tickStates = 20;
-		break;
-	//Operation LD IY, nn
-	case 0xFD & 0x2A:
-		tickStates = 20;
-		break;
-#pragma endregion deleted OpCodes
-
-	default:
-		break;
-	}
+	
+	tickStates = (this->*(gbOpCodeTable[opcode]))();
 
 	return tickStates;
 }
 
 uint8_t Gameboy::decodeOPCodeI__d(const uint8_t &opcode, uint16_t index)
 {
+	//NO NEED FOR OPTIMILIZATION, does not / should not be used. (TODO: remove if interrupting with performance)
+
 	uint8_t tickStates = 0;
 	uint8_t n, d, readVal = NULL;
 
@@ -556,4 +756,115 @@ uint8_t Gameboy::PUSH(const uint16_t & qq)
 
 	tickStates = 11;
 	return tickStates;
+}
+
+void Gameboy::InitilizeOpCodeTable()
+{
+	//everycommand is either no operation or returns combining opcode.
+	for (int i = 0x00; i < 0xFF; i++)
+	{
+		gbOpCodeTable[i] = &Gameboy::NOP;
+	}
+
+	gbOpCodeTable[0x7F] = &Gameboy::LD_A_A; //+LD AA
+	gbOpCodeTable[0x78] = &Gameboy::LD_A_B; //+LD AB
+	gbOpCodeTable[0x79] = &Gameboy::LD_A_C; //+LD AC
+	gbOpCodeTable[0x7A] = &Gameboy::LD_A_D; //+LD AD
+	gbOpCodeTable[0x7B] = &Gameboy::LD_A_E; //+LD AE
+	gbOpCodeTable[0X7C] = &Gameboy::LD_A_H; //+LD AH
+	gbOpCodeTable[0X7D] = &Gameboy::LD_A_L; //+LD AL
+	gbOpCodeTable[0x77] = &Gameboy::LD_B_A; //+LD BA
+	gbOpCodeTable[0x40] = &Gameboy::LD_B_B; //+LD BB
+	gbOpCodeTable[0x41] = &Gameboy::LD_B_C; //+LD BC
+	gbOpCodeTable[0x42] = &Gameboy::LD_B_D; //+LD BD
+	gbOpCodeTable[0x43] = &Gameboy::LD_B_E; //+LD BE
+	gbOpCodeTable[0x44] = &Gameboy::LD_B_H; //+LD BH
+	gbOpCodeTable[0x45] = &Gameboy::LD_B_L; //+LD BL
+	gbOpCodeTable[0x4F] = &Gameboy::LD_C_A; //+LD CA
+	gbOpCodeTable[0x48] = &Gameboy::LD_C_B; //+LD CB
+	gbOpCodeTable[0x49] = &Gameboy::LD_C_C; //+LD CC
+	gbOpCodeTable[0x4A] = &Gameboy::LD_C_D; //+LD CD
+	gbOpCodeTable[0x4B] = &Gameboy::LD_C_E; //+LD CE
+	gbOpCodeTable[0X4C] = &Gameboy::LD_C_H; //+LD CH
+	gbOpCodeTable[0X4D] = &Gameboy::LD_C_L; //+LD CL
+	gbOpCodeTable[0x57] = &Gameboy::LD_D_A; //+LD DA
+	gbOpCodeTable[0x50] = &Gameboy::LD_D_B; //+LD DB
+	gbOpCodeTable[0x51] = &Gameboy::LD_D_C; //+LD DC
+	gbOpCodeTable[0x52] = &Gameboy::LD_D_D; //+LD DD
+	gbOpCodeTable[0x53] = &Gameboy::LD_D_E; //+LD DE
+	gbOpCodeTable[0x54] = &Gameboy::LD_D_H; //+LD DH
+	gbOpCodeTable[0x55] = &Gameboy::LD_D_L; //+LD DL
+	gbOpCodeTable[0x5F] = &Gameboy::LD_E_A; //+LD EA
+	gbOpCodeTable[0x58] = &Gameboy::LD_E_B; //+LD EB
+	gbOpCodeTable[0x59] = &Gameboy::LD_E_C; //+LD EC
+	gbOpCodeTable[0x5A] = &Gameboy::LD_E_D; //+LD ED
+	gbOpCodeTable[0x5B] = &Gameboy::LD_E_E; //+LD EE
+	gbOpCodeTable[0x5C] = &Gameboy::LD_E_H; //+LD EH
+	gbOpCodeTable[0x5D] = &Gameboy::LD_E_L; //+LD EL
+	gbOpCodeTable[0x67] = &Gameboy::LD_H_A; //+LD HA
+	gbOpCodeTable[0x60] = &Gameboy::LD_H_B; //+LD HB
+	gbOpCodeTable[0x61] = &Gameboy::LD_H_C; //+LD HC
+	gbOpCodeTable[0x62] = &Gameboy::LD_H_D; //+LD HD
+	gbOpCodeTable[0x63] = &Gameboy::LD_H_E; //+LD HE
+	gbOpCodeTable[0x64] = &Gameboy::LD_H_H; //+LD HH
+	gbOpCodeTable[0x65] = &Gameboy::LD_H_L; //+LD HL
+	gbOpCodeTable[0x6F] = &Gameboy::LD_L_A; //+LD LA
+	gbOpCodeTable[0x68] = &Gameboy::LD_L_B; //+LD LB
+	gbOpCodeTable[0x69] = &Gameboy::LD_L_C; //+LD LC
+	gbOpCodeTable[0x6A] = &Gameboy::LD_L_D; //+LD LD
+	gbOpCodeTable[0x6B] = &Gameboy::LD_L_E; //+LD LE
+	gbOpCodeTable[0x6C] = &Gameboy::LD_L_H; //+LD LH
+	gbOpCodeTable[0x6D] = &Gameboy::LD_L_L; //+LD LL
+	gbOpCodeTable[0x3E] = &Gameboy::LD_A_nn; //+LDAnA(#)
+	gbOpCodeTable[0x06] = &Gameboy::LD_B_n; //#LD(nn)n_Bn
+	gbOpCodeTable[0x0E] = &Gameboy::LD_C_n; //#LD(nn)n_Cn
+	gbOpCodeTable[0x16] = &Gameboy::LD_D_n; //#LD(nn)n_Dn
+	gbOpCodeTable[0x1E] = &Gameboy::LD_E_n; //#LD(nn)n_En
+	gbOpCodeTable[0x26] = &Gameboy::LD_H_n; //#LD(nn)n_Hn
+	gbOpCodeTable[0x2E] = &Gameboy::LD_L_n; //#LD(nn)n_Ln
+
+		//Operation LD r, (HL)
+	gbOpCodeTable[0x7E] = &Gameboy::LD_A_HL; //+LDAnA(HL)
+	gbOpCodeTable[0x46] = &Gameboy::LD_B_HL; //+LDR(HL)_B(HL)
+	gbOpCodeTable[0x4E] = &Gameboy::LD_C_HL; //+LDR(HL)_C(HL)
+	gbOpCodeTable[0x56] = &Gameboy::LD_D_HL; //+LDR(HL)_D(HL)
+	gbOpCodeTable[0x5E] = &Gameboy::LD_E_HL; //+LDR(HL)_E(HL)
+	gbOpCodeTable[0x66] = &Gameboy::LD_H_HL; //+LDR(HL)_H(HL)
+	gbOpCodeTable[0x6E] = &Gameboy::LD_L_HL; //+LDR(HL)_L(HL)
+
+		//Operation LD (HL), r
+	gbOpCodeTable[0x77] = &Gameboy::LD_HL_A; //+LDnA(HL)A
+	gbOpCodeTable[0x70] = &Gameboy::LD_HL_B; //+LD(HL)R_(HL)B
+	gbOpCodeTable[0x71] = &Gameboy::LD_HL_C; //+LD(HL)R_(HL)C
+	gbOpCodeTable[0x72] = &Gameboy::LD_HL_D; //+LD(HL)R_(HL)D
+	gbOpCodeTable[0x73] = &Gameboy::LD_HL_E; //+LD(HL)R_(HL)E
+	gbOpCodeTable[0x74] = &Gameboy::LD_HL_H; //+LD(HL)R_(HL)H
+	gbOpCodeTable[0x75] = &Gameboy::LD_HL_L; //+LD(HL)R_(HL)L
+	gbOpCodeTable[0x36] = &Gameboy::LD_HL_n; //#LD(HL)R_(HL)n
+
+		
+	gbOpCodeTable[0x02] = &Gameboy::LD_BC_A; //+LDnA(BC)A
+	gbOpCodeTable[0x12] = &Gameboy::LD_DE_A; //+LDnA(DE)A
+	gbOpCodeTable[0xEA] = &Gameboy::LD_nn_A; //+LDnA(nn)A
+	gbOpCodeTable[0x0A] = &Gameboy::LD_A_BC; //+LDAnA(BC)
+	gbOpCodeTable[0x1A] = &Gameboy::LD_A_DE; //+LDAnA(DE)
+	gbOpCodeTable[0xFA] = &Gameboy::LD_A_nn; //+LDAnA(nn)
+	gbOpCodeTable[0x2A] = &Gameboy::LD_HL_nn; //+LDHL(nn)
+	gbOpCodeTable[0xF9] = &Gameboy::LD_SP_HL; //Operation LD SP,HL
+#pragma region deleted OpCodes
+
+	gbOpCodeTable[0xED] = &Gameboy::LD_I; //+LDI
+	gbOpCodeTable[0xDD] = &Gameboy::LD_r_IX_PLUS_d; //Operation LD r, (IX+d)
+	gbOpCodeTable[0xFD] = &Gameboy::LD_r_IY_PLUS_d; //Operation LD r, (IY+d)
+#pragma endregion deleted OpCodes
+
+#pragma region custom OpCodes
+	gbOpCodeTable[0xF2] = &Gameboy::LD_A_FF00_PLUS_C;
+	gbOpCodeTable[0xE2] = &Gameboy::LD_FF00_PLUS_C_A;
+	gbOpCodeTable[0x3A] = &Gameboy::LDD_A_HL; 
+	gbOpCodeTable[0x32] = &Gameboy::LDD_HL_A; 
+	gbOpCodeTable[0x2A] = &Gameboy::LDI_A_HL;
+	gbOpCodeTable[0x22] = &Gameboy::LDI_HL_A;
+#pragma endregion custom OpCodes
+
 }
