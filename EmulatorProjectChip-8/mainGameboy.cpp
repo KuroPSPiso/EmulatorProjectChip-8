@@ -111,8 +111,8 @@ int mainGameboy::run()
 	{
 		__gameboy.emulateCycle(); //execute one cycle
 
-								//on draw flag update screen
-		if (__gameboy.drawFlag)
+								
+		if (__gameboy.drawFlag) //on draw flag update screen
 		{
 			drawGraphics();
 		}

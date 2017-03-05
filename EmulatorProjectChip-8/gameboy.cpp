@@ -4,6 +4,42 @@ void Gameboy::write(const uint16_t &address, const uint8_t value)
 {
 	memory[address] = value;
 }
+void Gameboy::add(const uint16_t &address, const uint8_t value)
+{
+	memory[address] += value;
+}
+void Gameboy::subtract(const uint16_t &address, const uint8_t value)
+{
+	memory[address] -= value;
+}
+void Gameboy::ADD_SetFlag(uint8_t result)
+{
+	//TODO: check if solution works.
+	switch (result) //flag
+	{
+	case 0x00:
+		cpuRegistery.registery.F = flag_Z;
+		break;
+	case 0x03:
+		cpuRegistery.registery.F = flag_H;
+		break;
+	case 0x07:
+		cpuRegistery.registery.F = flag_C;
+		break;
+	default: //TODO: check if any result needs to be reset.
+		cpuRegistery.registery.F = flag_N;
+		break;
+	}
+}
+void Gameboy::SUB_SetFlag(uint8_t result)
+{
+	//TODO: check if solution works.
+	if (result < 0) { cpuRegistery.registery.F = flag_C; }
+	else if (result = 0x00) { cpuRegistery.registery.F = flag_Z; }
+	else if (result = 0x04) { cpuRegistery.registery.F = flag_H; }
+	else { cpuRegistery.registery.F = flag_N; }
+}
+
 const uint8_t& Gameboy::read(const uint16_t &address)
 {
 	return memory[address];
@@ -17,6 +53,7 @@ void Gameboy::emulateCycle()
 
 void Gameboy::RESET()
 {
+	Gameboy::InitilizeOpCodeTable();
 }
 
 bool Gameboy::loadApplication(const char * filename)
@@ -35,11 +72,12 @@ uint8_t Gameboy::fetch()
 	return data;
 }
 
+#pragma region 8-bit Loads
 /*0x00*/
 int Gameboy::NOP()
 {
-	//No Operation Protocol
-	return 0;
+	//No Operation
+	return 4;
 }
 
 /*0x7F*/
@@ -489,7 +527,6 @@ int Gameboy::LD_HL_n()
 	write(cpuRegistery.registery.HL, n);
 	return 12;
 }
-
 /*0xEA*/
 int Gameboy::LD_nn_A()
 {
@@ -532,18 +569,10 @@ int Gameboy::LD_A_nn()
 	cpuRegistery.registery.A = n;
 	return 16;
 }
-/*0x2A*/
-int Gameboy::LD_HL_nn()
-{
-	uint8_t n = read(fetch());
-	cpuRegistery.registery.H = n + 1;
-	cpuRegistery.registery.L = n;
-	return 16;
-}
 /*0xF9*/
 int Gameboy::LD_SP_HL()
 {
-	cpuRegistery.sp = read(cpuRegistery.registery.HL);
+	cpuRegistery.sp = cpuRegistery.registery.HL;
 	return 8;
 }
 
@@ -628,14 +657,443 @@ int Gameboy::LD_r_IY_PLUS_d()
 }
 #pragma endregion deleted OpCodes
 
+#pragma endregion 8-bit Loads
+
+#pragma region 16-bit Loads
+/*0x01*/
+int Gameboy::LD_BC_nn()
+{
+	//due to littleendian first
+	//cpuRegistery.registery.C = fetch();
+	//cpuRegistery.registery.B = fetch();
+	uint8_t n = fetch();
+	cpuRegistery.registery.C = n;
+	n = fetch();
+	cpuRegistery.registery.B = n;
+	return 12;
+}
+/*0x11*/
+int Gameboy::LD_DE_nn()
+{
+	uint8_t n = fetch();
+	cpuRegistery.registery.E = n;
+	n = fetch();
+	cpuRegistery.registery.D = n;
+	return 12;
+}
+/*0x21*/
+int Gameboy::LD_HL_nn()
+{
+	//uint8_t n = read(fetch());
+	//cpuRegistery.registery.H = n + 1;
+	//cpuRegistery.registery.L = n;
+	uint8_t n = fetch();
+	cpuRegistery.registery.L = n;
+	n = fetch();
+	cpuRegistery.registery.H = n;
+	return 12;
+}
+/*0x31*/
+int Gameboy::LD_SP_nn()
+{
+	uint8_t n = fetch();
+	uint8_t n1 = fetch();
+	cpuRegistery.sp = (n >> 8) + n1; //TODO: check sp result
+	return 12;
+}
+/*0xF8*/
+int Gameboy::LD_HL_SP_PLUS_n()
+{
+	uint8_t n = fetch();
+	add(cpuRegistery.sp, n);
+	cpuRegistery.registery.HL = cpuRegistery.sp;
+	subtract(cpuRegistery.sp, n);
+	return 12;
+}
+/*0x08*/
+int Gameboy::LD_nn_SP()
+{
+	uint8_t n = fetch();
+	n = read(cpuRegistery.sp);
+	n = fetch();
+	n = read(cpuRegistery.sp);
+	return 20;
+}
+/*0xF5*/
+int Gameboy::PUSH_AF()
+{
+	cpuRegistery.sp = cpuRegistery.registery.AF;
+	cpuRegistery.sp -= 2;
+	return 16;
+}
+/*0xC5*/
+int Gameboy::PUSH_BC()
+{
+	cpuRegistery.sp = cpuRegistery.registery.BC;
+	cpuRegistery.sp -= 2;
+	return 16;
+}
+/*0xD5*/
+int Gameboy::PUSH_DE()
+{
+	cpuRegistery.sp = cpuRegistery.registery.DE;
+	cpuRegistery.sp -= 2;
+	return 16;
+}
+/*0xE5*/
+int Gameboy::PUSH_HL()
+{
+	cpuRegistery.sp = cpuRegistery.registery.HL;
+	cpuRegistery.sp -= 2;
+	return 16;
+}
+/*0xF1*/
+int Gameboy::POP_AF()
+{
+	uint8_t n = fetch();
+	n = cpuRegistery.registery.F;
+	n = fetch();
+	n = cpuRegistery.registery.A;
+	cpuRegistery.sp += 2;
+	return 12;
+}
+/*0xC1*/
+int Gameboy::POP_BC()
+{
+	uint8_t n = fetch();
+	n = cpuRegistery.registery.C;
+	n = fetch();
+	n = cpuRegistery.registery.B;
+	cpuRegistery.sp += 2;
+	return 12;
+}
+/*0xD1*/
+int Gameboy::POP_DE()
+{
+	uint8_t n = fetch();
+	n = cpuRegistery.registery.E;
+	n = fetch();
+	n = cpuRegistery.registery.D;
+	cpuRegistery.sp += 2;
+	return 12;
+}
+/*0xE1*/
+int Gameboy::POP_HL()
+{
+	uint8_t n = fetch();
+	n = cpuRegistery.registery.L;
+	n = fetch();
+	n = cpuRegistery.registery.H;
+	cpuRegistery.sp += 2;
+	return 12;
+}
+#pragma endregion 16-bit Loads
+
+#pragma region 8 bit ALU
+/*0x87*/
+int Gameboy::ADD_A_A()
+{
+	uint8_t s = cpuRegistery.registery.A;
+	cpuRegistery.registery.A += s;
+	ADD_SetFlag(s);
+	return 4;
+}
+/*0x80*/
+int Gameboy::ADD_A_B()
+{
+	uint8_t s = cpuRegistery.registery.B;
+	cpuRegistery.registery.A += s;
+	ADD_SetFlag(cpuRegistery.registery.A);
+	return 4;
+}
+/*0x81*/
+int Gameboy::ADD_A_C()
+{
+	uint8_t s = cpuRegistery.registery.C;
+	cpuRegistery.registery.A += s;
+	ADD_SetFlag(cpuRegistery.registery.A);
+	return 4;
+}
+/*0x82*/
+int Gameboy::ADD_A_D()
+{
+	uint8_t s = cpuRegistery.registery.D;
+	cpuRegistery.registery.A += s;
+	ADD_SetFlag(cpuRegistery.registery.A);
+	return 4;
+}
+/*0x83*/
+int Gameboy::ADD_A_E()
+{
+	uint8_t s = cpuRegistery.registery.E;
+	cpuRegistery.registery.A += s;
+	ADD_SetFlag(cpuRegistery.registery.A);
+	return 4;
+}
+/*0x84*/
+int Gameboy::ADD_A_H()
+{
+	uint8_t s = cpuRegistery.registery.H;
+	cpuRegistery.registery.A += s;
+	ADD_SetFlag(cpuRegistery.registery.A);
+	return 4;
+}
+/*0x85*/
+int Gameboy::ADD_A_L()
+{
+	uint8_t s = cpuRegistery.registery.L;
+	cpuRegistery.registery.A += s;
+	ADD_SetFlag(cpuRegistery.registery.A);
+	return 4;
+}
+/*0x86*/
+int Gameboy::ADD_A_HL()
+{
+	uint8_t s = read(cpuRegistery.registery.HL);
+	cpuRegistery.registery.A += s;
+	ADD_SetFlag(cpuRegistery.registery.A);
+	return 8;
+}
+/*0xC6*/
+int Gameboy::ADD_A_n()
+{
+	uint8_t n = fetch();
+	cpuRegistery.registery.A += n;
+	ADD_SetFlag(n);
+	return 8;
+}
+/*0x8F*/
+int Gameboy::ADC_A_A()
+{
+	uint8_t s = cpuRegistery.registery.A;
+	cpuRegistery.registery.A += s + cpuRegistery.registery.F;
+	ADD_SetFlag(s);
+	return 4;
+}
+/*0x88*/
+int Gameboy::ADC_A_B()
+{
+	uint8_t s = cpuRegistery.registery.B;
+	cpuRegistery.registery.A += s + cpuRegistery.registery.F;
+	ADD_SetFlag(s);
+	return 4;
+}
+/*0x89*/
+int Gameboy::ADC_A_C()
+{
+	uint8_t s = cpuRegistery.registery.C;
+	cpuRegistery.registery.A += s + cpuRegistery.registery.F;
+	ADD_SetFlag(s);
+	return 4;
+}
+/*0x8A*/
+int Gameboy::ADC_A_D()
+{
+	uint8_t s = cpuRegistery.registery.D;
+	cpuRegistery.registery.A += s + cpuRegistery.registery.F;
+	ADD_SetFlag(s);
+	return 4;
+}
+/*0x8B*/
+int Gameboy::ADC_A_E()
+{
+	uint8_t s = cpuRegistery.registery.E;
+	cpuRegistery.registery.A += s + cpuRegistery.registery.F;
+	ADD_SetFlag(s);
+	return 4;
+}
+/*0x8C*/
+int Gameboy::ADC_A_H()
+{
+	uint8_t s = cpuRegistery.registery.H;
+	cpuRegistery.registery.A += s + cpuRegistery.registery.F;
+	ADD_SetFlag(s);
+	return 4;
+}
+/*0x8D*/
+int Gameboy::ADC_A_L()
+{
+	uint8_t s = cpuRegistery.registery.L;
+	cpuRegistery.registery.A += s + cpuRegistery.registery.F;
+	ADD_SetFlag(s);
+	return 4;
+}
+/*0x8E*/
+int Gameboy::ADC_A_HL()
+{
+	uint8_t s = read(cpuRegistery.registery.HL);
+	cpuRegistery.registery.A += s + cpuRegistery.registery.F;
+	ADD_SetFlag(s);
+	return 8;
+}
+/*0xCE*/
+int Gameboy::ADC_A_n()
+{
+	uint8_t n = fetch();
+	cpuRegistery.registery.A += n + cpuRegistery.registery.F;
+	ADD_SetFlag(n);
+	return 8;
+}
+/*0x97*/
+int Gameboy::SUB_A_A()
+{
+	uint8_t s = cpuRegistery.registery.A;
+	cpuRegistery.registery.A += s + cpuRegistery.registery.F;
+	SUB_SetFlag(s);
+	return 4;
+}
+/*0x90*/
+int Gameboy::SUB_A_B()
+{
+	uint8_t s = cpuRegistery.registery.B;
+	cpuRegistery.registery.A += s + cpuRegistery.registery.F;
+	SUB_SetFlag(s);
+	return 4;
+}
+/*0x91*/
+int Gameboy::SUB_A_C()
+{
+	uint8_t s = cpuRegistery.registery.C;
+	cpuRegistery.registery.A += s + cpuRegistery.registery.F;
+	SUB_SetFlag(s);
+	return 4;
+}
+/*0x92*/
+int Gameboy::SUB_A_D()
+{
+	uint8_t s = cpuRegistery.registery.D;
+	cpuRegistery.registery.A += s + cpuRegistery.registery.F;
+	SUB_SetFlag(s);
+	return 4;
+}
+/*0x93*/
+int Gameboy::SUB_A_E()
+{
+	uint8_t s = cpuRegistery.registery.E;
+	cpuRegistery.registery.A += s + cpuRegistery.registery.F;
+	SUB_SetFlag(s);
+	return 4;
+}
+/*0x94*/
+int Gameboy::SUB_A_H()
+{
+	uint8_t s = cpuRegistery.registery.H;
+	cpuRegistery.registery.A += s + cpuRegistery.registery.F;
+	SUB_SetFlag(s);
+	return 4;
+}
+/*0x95*/
+int Gameboy::SUB_A_L()
+{
+	uint8_t s = cpuRegistery.registery.L;
+	cpuRegistery.registery.A += s + cpuRegistery.registery.F;
+	SUB_SetFlag(s);
+	return 4;
+}
+/*0x96*/
+int Gameboy::SUB_A_HL()
+{
+	uint8_t s = read(cpuRegistery.registery.HL);
+	cpuRegistery.registery.A += s + cpuRegistery.registery.F;
+	SUB_SetFlag(s);
+	return 8;
+}
+/*0xD6*/
+int Gameboy::SUB_A_n()
+{
+	uint8_t n = fetch();
+	cpuRegistery.registery.A += n + cpuRegistery.registery.F;
+	SUB_SetFlag(n);
+	return 8;
+}
+/*0x9F*/
+int Gameboy::SBC_A_A()
+{
+	uint8_t s = cpuRegistery.registery.A;
+	cpuRegistery.registery.A += s + cpuRegistery.registery.F;
+	SUB_SetFlag(s);
+	return 4;
+}
+/*0x98*/
+int Gameboy::SBC_A_B()
+{
+	uint8_t s = cpuRegistery.registery.B;
+	cpuRegistery.registery.A += s + cpuRegistery.registery.F;
+	SUB_SetFlag(s);
+	return 4;
+}
+/*0x99*/
+int Gameboy::SBC_A_C()
+{
+	uint8_t s = cpuRegistery.registery.C;
+	cpuRegistery.registery.A += s + cpuRegistery.registery.F;
+	SUB_SetFlag(s);
+	return 4;
+}
+/*0x9A*/
+int Gameboy::SBC_A_D()
+{
+	uint8_t s = cpuRegistery.registery.D;
+	cpuRegistery.registery.A += s + cpuRegistery.registery.F;
+	SUB_SetFlag(s);
+	return 4;
+}
+/*0x9B*/
+int Gameboy::SBC_A_E()
+{
+	uint8_t s = cpuRegistery.registery.E;
+	cpuRegistery.registery.A += s + cpuRegistery.registery.F;
+	SUB_SetFlag(s);
+	return 4;
+}
+/*0x9C*/
+int Gameboy::SBC_A_H()
+{
+	uint8_t s = cpuRegistery.registery.H;
+	cpuRegistery.registery.A += s + cpuRegistery.registery.F;
+	SUB_SetFlag(s);
+	return 4;
+}
+/*0x9D*/
+int Gameboy::SCB_A_L()
+{
+	uint8_t s = cpuRegistery.registery.L;
+	cpuRegistery.registery.A += s + cpuRegistery.registery.F;
+	SUB_SetFlag(s);
+	return 4;
+}
+/*0x9E*/
+int Gameboy::SCB_A_HL()
+{
+	uint8_t s = read(cpuRegistery.registery.HL);
+	cpuRegistery.registery.A += s + cpuRegistery.registery.F;
+	SUB_SetFlag(s);
+	return 8;
+}
+/*0xDE*/
+int Gameboy::SCB_A_n()
+{
+	uint8_t n = fetch();
+	cpuRegistery.registery.A += n + cpuRegistery.registery.F;
+	SUB_SetFlag(n);
+	return 8;
+}
+
+#pragma endregion 8 bit ALU
 
 uint8_t Gameboy::decodeOPCode(const uint8_t &opcode)
 {
-
-	uint8_t tickStates = 0; 
+	int tickStates = 0; 
 	uint8_t n, readVal, subOpCode = NULL;
 	
-	tickStates = (this->*(gbOpCodeTable[opcode]))();
+	try
+	{
+		tickStates = (this->*(gbOpCodeTable[opcode]))();
+	}
+	catch (std::exception &e)
+	{
+		printf(e.what());
+	}
 
 	return tickStates;
 }
@@ -748,16 +1206,6 @@ uint8_t Gameboy::decodeOPCodeI__d(const uint8_t &opcode, uint16_t index)
 	return tickStates;
 }
 
-uint8_t Gameboy::PUSH(const uint16_t & qq)
-{
-	uint8_t tickStates = 0;
-
-	cpuRegistery.sp = 0xC5 & read(qq);
-
-	tickStates = 11;
-	return tickStates;
-}
-
 void Gameboy::InitilizeOpCodeTable()
 {
 	//everycommand is either no operation or returns combining opcode.
@@ -849,7 +1297,7 @@ void Gameboy::InitilizeOpCodeTable()
 	gbOpCodeTable[0x0A] = &Gameboy::LD_A_BC; //+LDAnA(BC)
 	gbOpCodeTable[0x1A] = &Gameboy::LD_A_DE; //+LDAnA(DE)
 	gbOpCodeTable[0xFA] = &Gameboy::LD_A_nn; //+LDAnA(nn)
-	gbOpCodeTable[0x2A] = &Gameboy::LD_HL_nn; //+LDHL(nn)
+	gbOpCodeTable[0x2A] = &Gameboy::LDI_A_HL; //+LDHL(nn)
 	gbOpCodeTable[0xF9] = &Gameboy::LD_SP_HL; //Operation LD SP,HL
 #pragma region deleted OpCodes
 
@@ -863,8 +1311,56 @@ void Gameboy::InitilizeOpCodeTable()
 	gbOpCodeTable[0xE2] = &Gameboy::LD_FF00_PLUS_C_A;
 	gbOpCodeTable[0x3A] = &Gameboy::LDD_A_HL; 
 	gbOpCodeTable[0x32] = &Gameboy::LDD_HL_A; 
-	gbOpCodeTable[0x2A] = &Gameboy::LDI_A_HL;
 	gbOpCodeTable[0x22] = &Gameboy::LDI_HL_A;
 #pragma endregion custom OpCodes
+
+#pragma region 16 bit OpCodes
+	gbOpCodeTable[0x01] = &Gameboy::LD_A_FF00_PLUS_C;
+	gbOpCodeTable[0x11] = &Gameboy::LD_A_FF00_PLUS_C;
+	gbOpCodeTable[0x21] = &Gameboy::LD_HL_nn;
+	gbOpCodeTable[0x31] = &Gameboy::LD_SP_nn;
+	gbOpCodeTable[0xF9] = &Gameboy::LD_SP_HL;
+	gbOpCodeTable[0xF8] = &Gameboy::LD_HL_SP_PLUS_n;
+	gbOpCodeTable[0x08] = &Gameboy::LD_nn_SP;
+	gbOpCodeTable[0xF5] = &Gameboy::PUSH_AF;
+	gbOpCodeTable[0xC5] = &Gameboy::PUSH_BC;
+	gbOpCodeTable[0xD5] = &Gameboy::PUSH_DE;
+	gbOpCodeTable[0xE5] = &Gameboy::PUSH_HL;
+	gbOpCodeTable[0xF1] = &Gameboy::POP_AF;
+	gbOpCodeTable[0xC1] = &Gameboy::POP_BC;
+	gbOpCodeTable[0xD1] = &Gameboy::POP_DE;
+	gbOpCodeTable[0xE1] = &Gameboy::POP_HL;
+
+#pragma endregion 16 bit OpCodes
+
+#pragma region 8 bit ALU
+	gbOpCodeTable[0x87] = &Gameboy::ADD_A_A;
+	gbOpCodeTable[0x80] = &Gameboy::ADD_A_B;
+	gbOpCodeTable[0x81] = &Gameboy::ADD_A_C;
+	gbOpCodeTable[0x82] = &Gameboy::ADD_A_D;
+	gbOpCodeTable[0x83] = &Gameboy::ADD_A_E;
+	gbOpCodeTable[0x84] = &Gameboy::ADD_A_H;
+	gbOpCodeTable[0x85] = &Gameboy::ADD_A_L;
+	gbOpCodeTable[0x86] = &Gameboy::ADD_A_HL;
+	gbOpCodeTable[0xC6] = &Gameboy::ADD_A_n;
+	gbOpCodeTable[0x8F] = &Gameboy::ADC_A_A;
+	gbOpCodeTable[0x88] = &Gameboy::ADC_A_B;
+	gbOpCodeTable[0x89] = &Gameboy::ADC_A_C;
+	gbOpCodeTable[0x8A] = &Gameboy::ADC_A_D;
+	gbOpCodeTable[0x8B] = &Gameboy::ADC_A_E;
+	gbOpCodeTable[0x8C] = &Gameboy::ADC_A_H;
+	gbOpCodeTable[0x8D] = &Gameboy::ADC_A_L;
+	gbOpCodeTable[0x8E] = &Gameboy::ADC_A_HL;
+	gbOpCodeTable[0xCE] = &Gameboy::ADC_A_n;
+	gbOpCodeTable[0x97] = &Gameboy::SUB_A_A;
+	gbOpCodeTable[0x90] = &Gameboy::SUB_A_B;
+	gbOpCodeTable[0x91] = &Gameboy::SUB_A_C;
+	gbOpCodeTable[0x92] = &Gameboy::SUB_A_D;
+	gbOpCodeTable[0x93] = &Gameboy::SUB_A_E;
+	gbOpCodeTable[0x94] = &Gameboy::SUB_A_H;
+	gbOpCodeTable[0x95] = &Gameboy::SUB_A_L;
+	gbOpCodeTable[0x96] = &Gameboy::SUB_A_HL;
+	gbOpCodeTable[0xD6] = &Gameboy::SUB_A_n;
+#pragma endregion 8 bit ALU
 
 }
