@@ -1,0 +1,22 @@
+﻿  gameboy.cpp
+c:\users\adminuser.useradmin-pc\documents\visual studio 2015\projects\emulatorprojectchip-8\emulatorprojectchip-8\gameboy.h(17): warning C4305: 'initializing': truncation from 'int' to 'uint8_t'
+c:\users\adminuser.useradmin-pc\documents\visual studio 2015\projects\emulatorprojectchip-8\emulatorprojectchip-8\gameboy.h(17): warning C4309: 'initializing': truncation of constant value
+c:\users\adminuser.useradmin-pc\documents\visual studio 2015\projects\emulatorprojectchip-8\emulatorprojectchip-8\gameboy.h(18): warning C4305: 'initializing': truncation from 'int' to 'uint8_t'
+c:\users\adminuser.useradmin-pc\documents\visual studio 2015\projects\emulatorprojectchip-8\emulatorprojectchip-8\gameboy.h(18): warning C4309: 'initializing': truncation of constant value
+c:\users\adminuser.useradmin-pc\documents\visual studio 2015\projects\emulatorprojectchip-8\emulatorprojectchip-8\gameboy.h(19): warning C4305: 'initializing': truncation from 'int' to 'uint8_t'
+c:\users\adminuser.useradmin-pc\documents\visual studio 2015\projects\emulatorprojectchip-8\emulatorprojectchip-8\gameboy.h(19): warning C4309: 'initializing': truncation of constant value
+c:\users\adminuser.useradmin-pc\documents\visual studio 2015\projects\emulatorprojectchip-8\emulatorprojectchip-8\gameboy.h(20): warning C4305: 'initializing': truncation from 'int' to 'uint8_t'
+c:\users\adminuser.useradmin-pc\documents\visual studio 2015\projects\emulatorprojectchip-8\emulatorprojectchip-8\gameboy.h(20): warning C4309: 'initializing': truncation of constant value
+c:\users\adminuser.useradmin-pc\documents\visual studio 2015\projects\emulatorprojectchip-8\emulatorprojectchip-8\gameboy.h(23): warning C4305: 'initializing': truncation from 'int' to 'uint8_t'
+c:\users\adminuser.useradmin-pc\documents\visual studio 2015\projects\emulatorprojectchip-8\emulatorprojectchip-8\gameboy.h(23): warning C4309: 'initializing': truncation of constant value
+c:\users\adminuser.useradmin-pc\documents\visual studio 2015\projects\emulatorprojectchip-8\emulatorprojectchip-8\gameboy.h(24): warning C4305: 'initializing': truncation from 'int' to 'uint8_t'
+c:\users\adminuser.useradmin-pc\documents\visual studio 2015\projects\emulatorprojectchip-8\emulatorprojectchip-8\gameboy.h(24): warning C4309: 'initializing': truncation of constant value
+c:\users\adminuser.useradmin-pc\documents\visual studio 2015\projects\emulatorprojectchip-8\emulatorprojectchip-8\gameboy.h(25): warning C4305: 'initializing': truncation from 'int' to 'uint8_t'
+c:\users\adminuser.useradmin-pc\documents\visual studio 2015\projects\emulatorprojectchip-8\emulatorprojectchip-8\gameboy.h(25): warning C4309: 'initializing': truncation of constant value
+c:\users\adminuser.useradmin-pc\documents\visual studio 2015\projects\emulatorprojectchip-8\emulatorprojectchip-8\gameboy.h(26): warning C4305: 'initializing': truncation from 'int' to 'uint8_t'
+c:\users\adminuser.useradmin-pc\documents\visual studio 2015\projects\emulatorprojectchip-8\emulatorprojectchip-8\gameboy.h(26): warning C4309: 'initializing': truncation of constant value
+c:\users\adminuser.useradmin-pc\documents\visual studio 2015\projects\emulatorprojectchip-8\emulatorprojectchip-8\gameboy.cpp(80): warning C4244: '=': conversion from 'uint16_t' to 'uint8_t', possible loss of data
+c:\users\adminuser.useradmin-pc\documents\visual studio 2015\projects\emulatorprojectchip-8\emulatorprojectchip-8\gameboy.cpp(84): warning C4244: '=': conversion from 'uint16_t' to 'uint8_t', possible loss of data
+c:\users\adminuser.useradmin-pc\documents\visual studio 2015\projects\emulatorprojectchip-8\emulatorprojectchip-8\gameboy.cpp(104): warning C4244: '=': conversion from 'uint16_t' to 'uint8_t', possible loss of data
+  EmulatorProjectChip-8.vcxproj -> C:\Users\AdminUser.UserAdmin-PC\documents\visual studio 2015\Projects\EmulatorProjectChip-8\Debug\EmulatorProjectChip-8.exe
+  EmulatorProjectChip-8.vcxproj -> C:\Users\AdminUser.UserAdmin-PC\documents\visual studio 2015\Projects\EmulatorProjectChip-8\Debug\EmulatorProjectChip-8.pdb (Partial PDB)

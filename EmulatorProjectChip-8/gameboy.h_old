@@ -1,0 +1,96 @@
+#pragma once
+#ifndef GAMEBOY_H_
+
+#include "stdint.h"
+
+class Gameboy {
+#pragma region CPU registers and memory bus
+
+	unsigned short opcode;					//current opcode (2-bit)
+	unsigned char memory[8192];				//8k Memory bus (internal)
+	unsigned char switchableMemory[8192];	//8k Memory bus (switchable)
+	unsigned char switchableRomBank[16384]; //part of 32k cartrigde
+	unsigned char romBank[16384];			//part of 32k cartridge
+	unsigned char videoMemory[8192];		//8k video ram
+	unsigned char V[16];					//cpu registers, 0-14 = general purpose registers, 15 = carry flag
+
+	uint16_t	IX;	//index register
+	uint16_t	IY;	//index register
+	uint16_t	I;	//interrupt page address register
+	uint8_t		R;	//memory refresh register
+
+	uint16_t	pc;	//program counter
+	//uint8_t stack[16]; //store current location before jump, up to 16 levels of stack
+	uint8_t sp; //stack pointer (current stack in use)
+
+	#pragma region General Purpose Registers
+	//general set
+	uint8_t	A;	//accumulator
+	uint8_t F;	//flag
+
+	uint8_t	B;
+	uint8_t C;
+
+	uint8_t D;
+	uint8_t E;
+
+	uint8_t H;
+	uint8_t L;
+
+	//complementary set
+	uint8_t	A_;
+	uint8_t F_;
+
+	uint8_t	B_;
+	uint8_t C_;
+
+	uint8_t D_;
+	uint8_t E_;
+
+	uint8_t H_;
+	uint8_t L_;
+	#pragma endregion General Purpose Registers
+
+	#pragma region Pin Functions
+	uint16_t AddressBus;
+	bool BUSACK;
+	bool HALT;
+	bool NMI;
+
+	#pragma endregion Pin Functions
+
+#pragma endregion CPU registers and memory bus
+
+#pragma region Graphics
+	unsigned char bgGFX[256 * 256];	//virtual display
+	unsigned char gfx[64 * 32];		//160x144 (20x18 tiles) display
+
+#pragma region Additional interupts / registers not part of the Chip8-chipset
+								//Registers will have a 60hz refresh rate and will count back down to 0 once value is increased
+	unsigned char delay_timer;
+	unsigned char sound_timer;
+#pragma endregion Additional interupts / registers not part of the Chip8-chipset
+
+#pragma endregion Graphics
+
+public:
+	void Gameboy::initilize();
+	void Gameboy::emulateCycle();
+	bool Gameboy::loadApplication(const char * filename);
+	void Gameboy::debugDisplay();
+
+	void Gameboy::RESET();
+
+#pragma region Input register
+	unsigned char key[16]; //current key state
+#pragma endregion Input register
+
+#pragma region Graphics
+	bool drawFlag; //tick to update screen
+#pragma endregion Graphics
+
+private:
+	void Gameboy::decodeOPCode();
+};
+
+#endif // !CHIP8_H_

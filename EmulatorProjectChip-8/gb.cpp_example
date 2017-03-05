@@ -1,0 +1,263 @@
+//Operation 8-Bit Load Group
+//Operation LD r, r'
+	case 0x7F: //+LDRRAA
+		tickStates=4;
+	break;
+	case 0x78: //+LDRRAB
+		tickStates=4;
+	break;
+	case 0x79: //+LDRRAC
+		tickStates=4;
+	break;
+	case 0x7A: //+LDRRAD
+		tickStates=4;
+	break;
+	case 0x7B: //+LDRRAE
+		tickStates=4;
+	break;
+	case 0x7C: //+LDRRAH
+		tickStates=4;
+	break;
+	case 0x7D: //+LDRRAL
+		tickStates=4;
+	break;
+	case 0x0A: //+LDAnA(BC)
+		tickStates=8;
+	break;
+	case 0x1A: //+LDAnA(DE)
+		tickStates=8;
+	break;
+	case 0x7E: //+LDAnA(HL)
+		tickStates=8;
+	break;
+	case 0xFA: //+LDAnA(nn)
+		tickStates=16;
+	break;
+	case 0x3E: //+LDAnA(#)
+		tickStates=8;
+	break;
+	case 0x02: //+LDnA(BC)A
+		tickStates=8;
+	break;
+	case 0x12: //+LDnA(DE)A
+		tickStates=8;
+	break;
+	case 0x77: //+LDnA(HL)A
+		tickStates=8;
+	break;
+	case 0xEA: //+LDnA(nn)A
+		tickStates=16;
+	break;
+	case 0x2A: //+LDIA(HL)
+		tickStates=8;
+	break;
+
+	case 0x47: //+LDRRBA
+		tickStates=4;
+	break;
+	case 0x40: //+LDRRBB
+		tickStates=4;
+	break;
+	case 0x41: //+LDRRBC
+		tickStates=4;
+	break;
+	case 0x42: //+LDRRBD
+		tickStates=4;
+	break;
+	case 0x43: //+LDRRBE
+		tickStates=4;
+	break;
+	case 0x44: //+LDRRBH
+		tickStates=4;
+	break;
+	case 0x45: //+LDRRBL
+		tickStates=4;
+	break;
+
+	case 0x4F: //+LDRRCA
+		tickStates=4;
+	break;
+	case 0x48: //+LDRRCB
+		tickStates=4;
+	break;
+	case 0x49: //+LDRRCC
+		tickStates=4;
+	break;
+	case 0x4A: //+LDRRCD
+		tickStates=4;
+	break;
+	case 0x4B: //+LDRRCE
+		tickStates=4;
+	break;
+	case 0X4C: //+LDRRCH
+		tickStates=4;
+	break;
+	case 0X4D: //+LDRRCL
+		tickStates=4;
+	break;
+
+	case 0x57: //+LDRRDA
+		tickStates=4;
+	break;
+	case 0x50: //+LDRRDB
+		tickStates=4;
+	break;
+	case 0x51: //+LDRRDC
+		tickStates=4;
+	break;
+	case 0x52: //+LDRRDD
+		tickStates=4;
+	break;
+	case 0x53: //+LDRRDE
+		tickStates=4;
+	break;
+	case 0x54: //+LDRRDH
+		tickStates=4;
+	break;
+	case 0x55: //+LDRRDL
+		tickStates=4;
+	break;
+
+	case 0x5F: //+LDRREA
+		tickStates=4;
+	break;
+	case 0x58: //+LDRREB
+		tickStates=4;
+	break;
+	case 0x59: //+LDRREC
+		tickStates=4;
+	break;
+	case 0x5A: //+LDRRED
+		tickStates=4;
+	break;
+	case 0x5B: //+LDRREE
+		tickStates=4;
+	break;
+	case 0x5C: //+LDRREH
+		tickStates=4;
+	break;
+	case 0x5D: //+LDRREL
+		tickStates=4;
+	break;
+
+	case 0x67: //+LDRRHA
+		tickStates=4;
+	break;
+	case 0x60: //+LDRRHB
+		tickStates=4;
+	break;
+	case 0x61: //+LDRRHC
+		tickStates=4;
+	break;
+	case 0x62: //+LDRRHD
+		tickStates=4;
+	break;
+	case 0x63: //+LDRRHE
+		tickStates=4;
+	break;
+	case 0x64: //+LDRRHH
+		tickStates=4;
+	break;
+	case 0x65: //+LDRRHL
+		tickStates=4;
+	break;
+
+	case 0x6F: //+LDRRLA
+		tickStates=4;
+	break;
+	case 0x68: //+LDRRLB
+		tickStates=4;
+	break;
+	case 0x69: //+LDRRLC
+		tickStates=4;
+	break;
+	case 0x6A: //+LDRRLDRR
+		tickStates=4;
+	break;
+	case 0x6B: //+LDRRLE
+		tickStates=4;
+	break;
+	case 0x6C: //+LDRRLH
+		tickStates=4;
+	break;
+	case 0x6D: //+LDRRLL
+		tickStates=4;
+	break;
+
+//Operation LD r, (HL)
+	case 0x7E: //+LDR(HL)_A(HL)
+		tickStates=8;
+	break;
+	case 0x46: //+LDR(HL)_B(HL)
+		tickStates=8;
+	break;
+	case 0x4E: //+LDR(HL)_C(HL)
+		tickStates=8;
+	break;
+	case 0x56: //+LDR(HL)_D(HL)
+		tickStates=8;
+	break;
+	case 0x5E: //+LDR(HL)_E(HL)
+		tickStates=8;
+	break;
+	case 0x66: //+LDR(HL)_H(HL)
+		tickStates=8;
+	break;
+	case 0x6E: //+LDR(HL)_L(HL)
+		tickStates=8;
+	break;
+
+//Operation LD (HL), r
+	case 0x70: //+LD(HL)R_(HL)B
+		tickStates=8;
+	break;
+	case 0x71: //+LD(HL)R_(HL)C
+		tickStates=8;
+	break;
+	case 0x72: //+LD(HL)R_(HL)D
+		tickStates=8;
+	break;
+	case 0x73: //+LD(HL)R_(HL)E
+		tickStates=8;
+	break;
+	case 0x74: //+LD(HL)R_(HL)H
+		tickStates=8;
+	break;
+	case 0x75: //+LD(HL)R_(HL)L
+		tickStates=8;
+	break;
+	case 0x36: //#LD(HL)R_(HL)n
+		uint8_t n = fetch();
+		cpuRegistery.registery.HL = n;
+		tickStates=12;
+	break;
+	case 0x06: //#LD(nn)n_Bn
+		uint8_t n = fetch();
+		cpuRegistery.registery.B = n;
+		tickStates=8;
+	break;
+	case 0x0E: //#LD(nn)n_Cn
+		uint8_t n = fetch();
+		cpuRegistery.registery.C = n;
+		tickStates=8;
+	break;
+	case 0x16: //#LD(nn)n_Dn
+		uint8_t n = fetch();
+		cpuRegistery.registery.D = n;
+		tickStates=8;
+	break;
+	case 0x1E: //#LD(nn)n_En
+		uint8_t n = fetch();
+		cpuRegistery.registery.E = n;
+		tickStates=8;
+	break;
+	case 0x26: //#LD(nn)n_Hn
+		uint8_t n = fetch();
+		cpuRegistery.registery.H = n;
+		tickStates=8;
+	break;
+	case 0x2E: //#LD(nn)n_Ln
+		uint8_t n = fetch();
+		cpuRegistery.registery.L = n;
+		tickStates=8;
+	break;
