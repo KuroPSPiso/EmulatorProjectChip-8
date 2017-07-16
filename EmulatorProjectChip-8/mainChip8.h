@@ -1,6 +1,7 @@
 #pragma once
 #ifndef MAINCHIP8_H_
 
+
 class mainChip8
 {
 public:

@@ -1,6 +1,14 @@
 #pragma once
 #ifndef CHIP8_H_
 
+#include "chip8.h"
+#include <io.h>
+#include <iostream>
+#include <fstream>
+#include <thread>
+#include <Windows.h>
+#include <errno.h>
+
 class chip8 {
 	#pragma region CPU registers and memory bus
 
@@ -26,6 +34,7 @@ class chip8 {
 	#pragma region Graphics
 
 	unsigned char gfx[64 * 32]; //black and white (64 x 32) display
+	HANDLE hdl_output;
 
 	#pragma region Additional interupts / registers not part of the Chip8-chipset
 	//Registers will have a 60hz refresh rate and will count back down to 0 once value is increased
