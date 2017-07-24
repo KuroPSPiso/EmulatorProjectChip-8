@@ -98,7 +98,7 @@ class Gameboy {
 
 #pragma region Graphics
 		unsigned char bgGFX[256 * 256];	//virtual display
-		unsigned char gfx[64 * 32];		//160x144 (20x18 tiles) display
+		unsigned char gfx[160 * 144];		//160x144 (20x18 tiles) display
 
 #pragma region Additional interupts / registers not part of the Chip8-chipset
 								//Registers will have a 60hz refresh rate and will count back down to 0 once value is increased
@@ -118,6 +118,7 @@ class Gameboy {
 		void Gameboy::subtract(const uint16_t & address, const uint8_t value);
 		void Gameboy::ADD_SetFlag(uint8_t result);
 		void Gameboy::SUB_SetFlag(uint8_t result);
+		void Gameboy::AND_SetFlag(uint8_t result);
 #pragma region Input register
 		unsigned char key[16]; //current key state
 #pragma endregion Input register
@@ -300,10 +301,18 @@ class Gameboy {
 		int SBC_A_H();
 		int SCB_A_L();
 		int SCB_A_HL();
-		int SCB_A_n();
+		int SCB_A_n(); //? unknown
 
 		//AND
-
+		int AND_A_A();
+		int AND_A_B();
+		int AND_A_C();
+		int AND_A_D();
+		int AND_A_E();
+		int AND_A_H();
+		int AND_A_L();
+		int AND_A_HL();
+		int AND_A_n();
 
 		//OR
 
@@ -321,4 +330,4 @@ class Gameboy {
 
 	};
 
-#endif // !CHIP8_H_
+#endif // !GAMEBOY_H_

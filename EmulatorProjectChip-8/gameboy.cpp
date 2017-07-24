@@ -39,6 +39,13 @@ void Gameboy::SUB_SetFlag(uint8_t result)
 	else if (result = 0x04) { cpuRegistery.registery.F = flag_H; }
 	else { cpuRegistery.registery.F = flag_N; }
 }
+void Gameboy::AND_SetFlag(uint8_t result)
+{
+	//TODO: check if solution works.
+	if (result = 0x00) { cpuRegistery.registery.F = flag_Z; }
+	else if (result > 0x00) { cpuRegistery.registery.F = flag_H; }
+	else { cpuRegistery.registery.F = flag_N; }
+}
 
 const uint8_t& Gameboy::read(const uint16_t &address)
 {
@@ -1079,6 +1086,78 @@ int Gameboy::SCB_A_n()
 	return 8;
 }
 
+int Gameboy::AND_A_A()
+{
+	uint8_t n = fetch();
+	cpuRegistery.registery.A = n & cpuRegistery.registery.A;
+	AND_SetFlag(cpuRegistery.registery.A);
+	return 4;
+}
+
+int Gameboy::AND_A_B()
+{
+	uint8_t n = fetch();
+	cpuRegistery.registery.A = n & cpuRegistery.registery.A;
+	AND_SetFlag(cpuRegistery.registery.A);
+	return 4;
+}
+
+int Gameboy::AND_A_C()
+{
+	uint8_t n = fetch();
+	cpuRegistery.registery.A = n & cpuRegistery.registery.A;
+	AND_SetFlag(cpuRegistery.registery.A);
+	return 4;
+}
+
+int Gameboy::AND_A_D()
+{
+	uint8_t n = fetch();
+	cpuRegistery.registery.A = n & cpuRegistery.registery.A;
+	AND_SetFlag(cpuRegistery.registery.A);
+	return 4;
+}
+
+int Gameboy::AND_A_E()
+{
+	uint8_t n = fetch();
+	cpuRegistery.registery.A = n & cpuRegistery.registery.A;
+	AND_SetFlag(cpuRegistery.registery.A);
+	return 4;
+}
+
+int Gameboy::AND_A_H()
+{
+	uint8_t n = fetch();
+	cpuRegistery.registery.A = n & cpuRegistery.registery.A;
+	AND_SetFlag(cpuRegistery.registery.A);
+	return 4;
+}
+
+int Gameboy::AND_A_L()
+{
+	uint8_t n = fetch();
+	cpuRegistery.registery.A = n & cpuRegistery.registery.A;
+	AND_SetFlag(cpuRegistery.registery.A);
+	return 4;
+}
+
+int Gameboy::AND_A_HL()
+{
+	uint8_t n = fetch();
+	cpuRegistery.registery.A = n & cpuRegistery.registery.A;
+	AND_SetFlag(cpuRegistery.registery.A);
+	return 4;
+}
+
+int Gameboy::AND_A_n()
+{
+	uint8_t n = fetch();
+	cpuRegistery.registery.A = n;
+	AND_SetFlag(cpuRegistery.registery.A);
+	return 4;
+}
+
 #pragma endregion 8 bit ALU
 
 uint8_t Gameboy::decodeOPCode(const uint8_t &opcode)
@@ -1361,6 +1440,15 @@ void Gameboy::InitilizeOpCodeTable()
 	gbOpCodeTable[0x95] = &Gameboy::SUB_A_L;
 	gbOpCodeTable[0x96] = &Gameboy::SUB_A_HL;
 	gbOpCodeTable[0xD6] = &Gameboy::SUB_A_n;
+	gbOpCodeTable[0xA7] = &Gameboy::AND_A_A;
+	gbOpCodeTable[0xA0] = &Gameboy::AND_A_B;
+	gbOpCodeTable[0xA1] = &Gameboy::AND_A_C;
+	gbOpCodeTable[0xA2] = &Gameboy::AND_A_D;
+	gbOpCodeTable[0xA3] = &Gameboy::AND_A_E;
+	gbOpCodeTable[0xA4] = &Gameboy::AND_A_H;
+	gbOpCodeTable[0xA5] = &Gameboy::AND_A_L;
+	gbOpCodeTable[0xA6] = &Gameboy::AND_A_HL;
+	gbOpCodeTable[0xE6] = &Gameboy::AND_A_n;
 #pragma endregion 8 bit ALU
 
 }

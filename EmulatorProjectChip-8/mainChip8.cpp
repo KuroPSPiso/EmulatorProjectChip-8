@@ -51,25 +51,25 @@ void mainChip8::inputUpdate()
 		__chip8.key[i] = 0; //default state = off
 	}
 
-	if (GetKeyState(__KEY_1) < 0)		__chip8.key[0x1] = 1;
-	if (GetKeyState(__KEY_2) < 0)		__chip8.key[0x2] = 1;
-	if (GetKeyState(__KEY_3) < 0)		__chip8.key[0x3] = 1;
-	if (GetKeyState(__KEY_C) < 0)		__chip8.key[0xC] = 1;
+	if (GetKeyState(__KEY_1) < 0)		__chip8.key[0] = 1;
+	if (GetKeyState(__KEY_2) < 0)		__chip8.key[1] = 1;
+	if (GetKeyState(__KEY_3) < 0)		__chip8.key[2] = 1;
+	if (GetKeyState(__KEY_C) < 0)		__chip8.key[3] = 1;
 
-	if (GetKeyState(__KEY_4) < 0)		__chip8.key[0x4] = 1;
-	if (GetKeyState(__KEY_5) < 0)		__chip8.key[0x5] = 1;
-	if (GetKeyState(__KEY_6) < 0)		__chip8.key[0x6] = 1;
-	if (GetKeyState(__KEY_D) < 0)		__chip8.key[0xD] = 1;
+	if (GetKeyState(__KEY_4) < 0)		__chip8.key[4] = 1;
+	if (GetKeyState(__KEY_5) < 0)		__chip8.key[5] = 1;
+	if (GetKeyState(__KEY_6) < 0)		__chip8.key[6] = 1;
+	if (GetKeyState(__KEY_D) < 0)		__chip8.key[7] = 1;
 
-	if (GetKeyState(__KEY_7) < 0)		__chip8.key[0x7] = 1;
-	if (GetKeyState(__KEY_8) < 0)		__chip8.key[0x8] = 1;
-	if (GetKeyState(__KEY_9) < 0)		__chip8.key[0x9] = 1;
-	if (GetKeyState(__KEY_E) < 0)		__chip8.key[0xE] = 1;
+	if (GetKeyState(__KEY_7) < 0)		__chip8.key[8] = 1;
+	if (GetKeyState(__KEY_8) < 0)		__chip8.key[9] = 1;
+	if (GetKeyState(__KEY_9) < 0)		__chip8.key[10] = 1;
+	if (GetKeyState(__KEY_E) < 0)		__chip8.key[11] = 1;
 
-	if (GetAsyncKeyState(__KEY_A) < 0)	__chip8.key[0xA] = 1;
-	if (GetAsyncKeyState(__KEY_0) < 0)	__chip8.key[0x0] = 1;
-	if (GetAsyncKeyState(__KEY_B) < 0)	__chip8.key[0xB] = 1;
-	if (GetAsyncKeyState(__KEY_F) < 0)	__chip8.key[0xF] = 1;
+	if (GetAsyncKeyState(__KEY_A) < 0)	__chip8.key[12] = 1;
+	if (GetAsyncKeyState(__KEY_0) < 0)	__chip8.key[13] = 1;
+	if (GetAsyncKeyState(__KEY_B) < 0)	__chip8.key[14] = 1;
+	if (GetAsyncKeyState(__KEY_F) < 0)	__chip8.key[15] = 1;
 
 }
 
