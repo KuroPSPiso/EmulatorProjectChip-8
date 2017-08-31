@@ -3,6 +3,7 @@
 
 #include "stdint.h"
 #include <iostream>
+#include "string.h"
 	
 class Gameboy {
 	//typedef int(Gameboy::*int_ptr)(int);
@@ -12,6 +13,7 @@ class Gameboy {
 
 		uint8_t opcode;							//current opcode (2-bit)
 		unsigned char memory[65536];			//64k memory << 16k rombank (part of cartrigde) #0000, 16k switchable rombank (part of cartrigde) #4000, 8k video ram #8000, 8k switchable memory bus (ram) #A000, 8k internal Memory bus (ram) #C000, 7k echo of 8k ram (internal) #E000, 160b sprite attribute memory #FE00, 96b empty #FEA0, 252b i/o ports #FF00, 52b empty #FF4C, 126b internal ram #FF80, 1b interrupt enable register #FFFF
+		unsigned char cartridge[65536];			//TODO: temp load
 
 		//unsigned char V[16];					//cpu registers, 0-14 = general purpose registers, 15 = carry flag
 
@@ -98,7 +100,7 @@ class Gameboy {
 
 #pragma region Graphics
 		unsigned char bgGFX[256 * 256];	//virtual display
-		unsigned char gfx[64 * 32];		//160x144 (20x18 tiles) display
+		unsigned char gfx[160 * 144];		//160x144 (20x18 tiles) display
 
 #pragma region Additional interupts / registers not part of the Chip8-chipset
 								//Registers will have a 60hz refresh rate and will count back down to 0 once value is increased
@@ -111,13 +113,18 @@ class Gameboy {
 		void Gameboy::RESET();
 
 		bool Gameboy::loadApplication(const char * filename);
+		int Gameboy::powerUpSequence();
 		void Gameboy::debugDisplay();
 		const uint8_t& Gameboy::read(const uint16_t &address);
 		void Gameboy::write(const uint16_t &address, const uint8_t value);
 		void Gameboy::add(const uint16_t & address, const uint8_t value);
 		void Gameboy::subtract(const uint16_t & address, const uint8_t value);
-		void Gameboy::ADD_SetFlag(uint8_t result);
-		void Gameboy::SUB_SetFlag(uint8_t result);
+		void Gameboy::SetFlag(uint8_t flag);
+		void Gameboy::ResetFlag(uint8_t flag);
+
+		void Gameboy::ADD_SetFlags(uint8_t result);
+		void Gameboy::SUB_SetFlags(uint8_t result);
+		void Gameboy::AND_SetFlags(uint8_t result);
 #pragma region Input register
 		unsigned char key[16]; //current key state
 #pragma endregion Input register
@@ -133,11 +140,12 @@ class Gameboy {
 		
 		void Gameboy::InitilizeOpCodeTable();
 
-		int_ptr gbOpCodeTable[255];
+		int_ptr gbOpCodeTable[256];
 
 		//?
 		int NOP();
 		//LD_r_r
+
 		int LD_A_A();
 		int LD_A_B();
 		int LD_A_C();
@@ -300,10 +308,18 @@ class Gameboy {
 		int SBC_A_H();
 		int SCB_A_L();
 		int SCB_A_HL();
-		int SCB_A_n();
+		int SCB_A_n(); //? unknown
 
 		//AND
-
+		int AND_A_A();
+		int AND_A_B();
+		int AND_A_C();
+		int AND_A_D();
+		int AND_A_E();
+		int AND_A_H();
+		int AND_A_L();
+		int AND_A_HL();
+		int AND_A_n();
 
 		//OR
 
@@ -321,4 +337,4 @@ class Gameboy {
 
 	};
 
-#endif // !CHIP8_H_
+#endif // !GAMEBOY_H_

@@ -1,0 +1,33 @@
+
+* zBoy's history... *
+
+
+zBoy v0.12 [28 Feb 2011]
+ - Added the "--EPXSCALE" command-line parameter, to scale the video screen using the EPX algorithm (instead of the default nearest-neighbour scaling),
+ - Added the "--EPXSCALE3" command-line parameter, to scale the video screen using a modified version of the EPX algorithm (triple scaling),
+ - Added the "--EAGLESCALE" command-line parameter, to scale the video screen using the EAGLE algorithm,
+ - Fixed a bug in the hiscore saving module, that could lead sometimes the emulator to crash,
+ - Added support for saving hiscores in following games: Ms. Pac-Man, Tetris, Asteroids, Tetris Attack, Galaga & Galaxian, BattleCity and Dig Dug,
+ - The LY (LCD) counter is incremented even when the LCD is disabled (otherwise Baseball don't start).
+
+zBoy v0.11 [09 Jan 2011]
+ - Resetting few additional internal variables at emulator's restart (F10) - now Duck Tales is not crashing anymore when restarted,
+ - Optimizations of the video subsystem and CPU emulation code (the emulator is about 2x faster now),
+ - Added support for Joypads,
+ - Added the possibility to redefine all keys (both emulated buttons and emulator's hotkeys),
+ - Fixed a small calculation bug causing the emulator to run at max (unlimited) speed after loading a game state,
+ - Added the "--ROMINFOS" command-line parameter, making zBoy to show various informations about the loaded ROM before starting the emulation,
+ - Added the "--NOSPEEDLIMIT" command-line parameter to play zBoy at unlimited speed (might be useful for benchmarking purposes),
+ - Added the "--SHOWFPS" command-line parameter to make zBoy display FPS value while playing (was always displayed before),
+ - Added support for "turbo keys" (also known as "auto fire") for buttons A and B,
+ - Implemented support for the MBC2 memory controller - made working such games like F-1 Race, Kid Icarus, Rolan's Curse II, Torpedo Range...,
+ - Implemented support for the MBC3 memory controller (but without TIMER support so far) - made working such games like Pokemon Blue and Pokemon Red,
+ - Added the "--NOSCREENSAVER" command-line parameter which prohibits any screensaver to start while the emulator is running (Linux only),
+ - Added the "--HISCORESMEM" option that tells zBoy to memorize HiScores in games that aren't able to do so by themselves (supports "Pipe Dream", "Pac-Man" and "Super Marioland"),
+ - The IME (Interrupt Master Enable) register is always set to 0 at boot now (games like "Pac-Man special color edition", "Pagemaster" and "Hook" are not crashing at start anymore).
+
+zBoy v0.10 [17 Dec 2010]
+ - First non-alpha version of zBoy, many GameBoy games are fully playable.
+
+zBoy v0.00 [22 Aug 2010]-[20 Nov 2010]
+ - Several versions of the zBoy emulator appeared, published as "alpha releases", without any versionning.

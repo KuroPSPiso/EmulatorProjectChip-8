@@ -8,23 +8,23 @@
 #include "chip8.h" // Your cpu core implementation
 #include "mainChip8.h"
 
-#define __KEY_1 0x31
-#define __KEY_2 0x32
-#define __KEY_3 0x33
-#define __KEY_C 0x34
-#define __KEY_4 0x51
-#define __KEY_5 0x57
-#define __KEY_6 0x45
-#define __KEY_D 0x52
-#define __KEY_7 0x41
-#define __KEY_8 0x53
-#define __KEY_9 0x44
-#define __KEY_E 0x46
-#define __KEY_A 0x5A
-#define __KEY_0 0x58
-#define __KEY_B 0x43
-#define __KEY_F 0x56
-#define __KEY_EXIT 0x1B
+#define __KEY_1 0x31	//1
+#define __KEY_2 0x32	//2
+#define __KEY_3 0x33	//3
+#define __KEY_C 0x34	//4
+#define __KEY_4 0x51	//Q
+#define __KEY_5 0x57	//W
+#define __KEY_6 0x45	//E
+#define __KEY_D 0x52	//R
+#define __KEY_7 0x41	//A
+#define __KEY_8 0x53	//S
+#define __KEY_9 0x44	//D
+#define __KEY_E 0x46	//F
+#define __KEY_A 0x5A	//Z
+#define __KEY_0 0x58	//X
+#define __KEY_B 0x43	//C
+#define __KEY_F 0x56	//V
+#define __KEY_EXIT 0x1B	//ESC
 
 chip8 __chip8;
 
@@ -41,30 +41,35 @@ void mainChip8::setupGraphics()
 
 void mainChip8::inputUpdate()
 {
-	if (GetAsyncKeyState(__KEY_EXIT) > 0)//(GetAsyncKeyState(VK_ESCAPE) > 0)
+	if (GetKeyState(__KEY_EXIT) < 0)
 	{
 		exit(0);
 	}
 
-	if (GetAsyncKeyState(__KEY_1) > 0)	__chip8.key[0x1] = 1;
-	else if (GetAsyncKeyState(__KEY_2) > 0)	__chip8.key[0x2] = 1;
-	else if (GetAsyncKeyState(__KEY_3) > 0)	__chip8.key[0x3] = 1;
-	else if (GetAsyncKeyState(__KEY_C) > 0)	__chip8.key[0xC] = 1;
+	for (int i = 0; i < sizeof(__chip8.key); i++)
+	{
+		__chip8.key[i] = 0; //default state = off
+	}
 
-	else if (GetAsyncKeyState(__KEY_4) > 0)	__chip8.key[0x4] = 1;
-	else if (GetAsyncKeyState(__KEY_5) > 0)	__chip8.key[0x5] = 1;
-	else if (GetAsyncKeyState(__KEY_6) > 0)	__chip8.key[0x6] = 1;
-	else if (GetAsyncKeyState(__KEY_D) > 0)	__chip8.key[0xD] = 1;
+	if (GetKeyState(__KEY_1) < 0)		__chip8.key[0] = 1;
+	if (GetKeyState(__KEY_2) < 0)		__chip8.key[1] = 1;
+	if (GetKeyState(__KEY_3) < 0)		__chip8.key[2] = 1;
+	if (GetKeyState(__KEY_C) < 0)		__chip8.key[3] = 1;
 
-	else if (GetAsyncKeyState(__KEY_7) > 0)	__chip8.key[0x7] = 1;
-	else if (GetAsyncKeyState(__KEY_8) > 0)	__chip8.key[0x8] = 1;
-	else if (GetAsyncKeyState(__KEY_9) > 0)	__chip8.key[0x9] = 1;
-	else if (GetAsyncKeyState(__KEY_E) > 0)	__chip8.key[0xE] = 1;
+	if (GetKeyState(__KEY_4) < 0)		__chip8.key[4] = 1;
+	if (GetKeyState(__KEY_5) < 0)		__chip8.key[5] = 1;
+	if (GetKeyState(__KEY_6) < 0)		__chip8.key[6] = 1;
+	if (GetKeyState(__KEY_D) < 0)		__chip8.key[7] = 1;
 
-	else if (GetAsyncKeyState(__KEY_A) > 0)	__chip8.key[0xA] = 1;
-	else if (GetAsyncKeyState(__KEY_0) > 0)	__chip8.key[0x0] = 1;
-	else if (GetAsyncKeyState(__KEY_B) > 0)	__chip8.key[0xB] = 1;
-	else if (GetAsyncKeyState(__KEY_F) > 0)	__chip8.key[0xF] = 1;
+	if (GetKeyState(__KEY_7) < 0)		__chip8.key[8] = 1;
+	if (GetKeyState(__KEY_8) < 0)		__chip8.key[9] = 1;
+	if (GetKeyState(__KEY_9) < 0)		__chip8.key[10] = 1;
+	if (GetKeyState(__KEY_E) < 0)		__chip8.key[11] = 1;
+
+	if (GetAsyncKeyState(__KEY_A) < 0)	__chip8.key[12] = 1;
+	if (GetAsyncKeyState(__KEY_0) < 0)	__chip8.key[13] = 1;
+	if (GetAsyncKeyState(__KEY_B) < 0)	__chip8.key[14] = 1;
+	if (GetAsyncKeyState(__KEY_F) < 0)	__chip8.key[15] = 1;
 
 }
 
@@ -133,7 +138,16 @@ int mainChip8::run()
 	// System emulation
 	for (;;)
 	{
+
+		//DRAWTIME IN MS
+		clock_t timespend_total = clock();
+
 		__chip8.emulateCycle(); //execute one cycle
+		inputUpdate();
+
+		clock_t timespend_cpu = clock() - timespend_total;
+
+		printf("%.f (CYCLE & INPUT TIME) ", timespend_cpu);
 
 		//on draw flag update screen
 		if (__chip8.drawFlag)
@@ -141,7 +155,12 @@ int mainChip8::run()
 			drawGraphics();
 		}
 
-		inputUpdate();
+		timespend_total = clock() - timespend_total;
+
+		float total_frames = ((float)timespend_total) / 1000;
+		float fps = 1 / total_frames;
+
+		printf("%.f FPS (FULL TIME) ", fps);
 	}
 	return 0;
 }

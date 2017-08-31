@@ -1,4 +1,4 @@
-#include "chip8.h"
+﻿#include "chip8.h"
 #include <io.h>
 #include <iostream>
 #include <fstream>
@@ -512,27 +512,46 @@ void chip8::emulateCycle()
 
 void chip8::debugDisplay()
 {
+
+	//DRAWTIME IN MS
+	clock_t timespend = clock();
+
 	// Draw
 	//system("cls");
 
-	COORD coord = { 0, 0 };
+	if (hdl_output == NULL)
+	{
+		hdl_output = GetStdHandle(STD_OUTPUT_HANDLE);
+		SetConsoleActiveScreenBuffer(hdl_output);
+	}
 
-	HANDLE output = GetStdHandle(STD_OUTPUT_HANDLE);
-	SetConsoleActiveScreenBuffer(output);
-	SetConsoleCursorPosition(output, coord);
+	COORD coord = { 0, 0 };
+	SetConsoleCursorPosition(hdl_output, coord);
+
+	std::string str;
 
 	for (int y = 0; y < 32; ++y)
 	{
 		for (int x = 0; x < 64; ++x)
 		{
 			if (gfx[(y * 64) + x] == 0)
-				printf("O");
+				str += "■";
 			else
-				printf(" ");
+				str += "□";
 		}
-		printf("\n");
+		str += "\n";
 	}
-	printf("\n");
+	const char* display = str.c_str();
+
+	//fwrite(display, 32 * 64, 1, stderr);
+	printf(str.c_str());
+
+	timespend = clock() - timespend;
+
+	float timespend_sec = ((float)timespend) / 1000;
+	float fps = 1 / timespend_sec;
+
+	printf("%.f FPS (RENDER TIME) ", fps);
 }
 
 #pragma endregion Chip8.H integration
