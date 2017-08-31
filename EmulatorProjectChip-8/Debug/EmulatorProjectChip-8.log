@@ -1,22 +1,23 @@
 ﻿  gameboy.cpp
-c:\users\adminuser.useradmin-pc\documents\visual studio 2015\projects\emulatorprojectchip-8\emulatorprojectchip-8\gameboy.h(19): warning C4305: 'initializing': truncation from 'int' to 'uint8_t'
-c:\users\adminuser.useradmin-pc\documents\visual studio 2015\projects\emulatorprojectchip-8\emulatorprojectchip-8\gameboy.h(19): warning C4309: 'initializing': truncation of constant value
-c:\users\adminuser.useradmin-pc\documents\visual studio 2015\projects\emulatorprojectchip-8\emulatorprojectchip-8\gameboy.h(20): warning C4305: 'initializing': truncation from 'int' to 'uint8_t'
-c:\users\adminuser.useradmin-pc\documents\visual studio 2015\projects\emulatorprojectchip-8\emulatorprojectchip-8\gameboy.h(20): warning C4309: 'initializing': truncation of constant value
 c:\users\adminuser.useradmin-pc\documents\visual studio 2015\projects\emulatorprojectchip-8\emulatorprojectchip-8\gameboy.h(21): warning C4305: 'initializing': truncation from 'int' to 'uint8_t'
 c:\users\adminuser.useradmin-pc\documents\visual studio 2015\projects\emulatorprojectchip-8\emulatorprojectchip-8\gameboy.h(21): warning C4309: 'initializing': truncation of constant value
 c:\users\adminuser.useradmin-pc\documents\visual studio 2015\projects\emulatorprojectchip-8\emulatorprojectchip-8\gameboy.h(22): warning C4305: 'initializing': truncation from 'int' to 'uint8_t'
 c:\users\adminuser.useradmin-pc\documents\visual studio 2015\projects\emulatorprojectchip-8\emulatorprojectchip-8\gameboy.h(22): warning C4309: 'initializing': truncation of constant value
-c:\users\adminuser.useradmin-pc\documents\visual studio 2015\projects\emulatorprojectchip-8\emulatorprojectchip-8\gameboy.h(25): warning C4305: 'initializing': truncation from 'int' to 'uint8_t'
-c:\users\adminuser.useradmin-pc\documents\visual studio 2015\projects\emulatorprojectchip-8\emulatorprojectchip-8\gameboy.h(25): warning C4309: 'initializing': truncation of constant value
-c:\users\adminuser.useradmin-pc\documents\visual studio 2015\projects\emulatorprojectchip-8\emulatorprojectchip-8\gameboy.h(26): warning C4305: 'initializing': truncation from 'int' to 'uint8_t'
-c:\users\adminuser.useradmin-pc\documents\visual studio 2015\projects\emulatorprojectchip-8\emulatorprojectchip-8\gameboy.h(26): warning C4309: 'initializing': truncation of constant value
+c:\users\adminuser.useradmin-pc\documents\visual studio 2015\projects\emulatorprojectchip-8\emulatorprojectchip-8\gameboy.h(23): warning C4305: 'initializing': truncation from 'int' to 'uint8_t'
+c:\users\adminuser.useradmin-pc\documents\visual studio 2015\projects\emulatorprojectchip-8\emulatorprojectchip-8\gameboy.h(23): warning C4309: 'initializing': truncation of constant value
+c:\users\adminuser.useradmin-pc\documents\visual studio 2015\projects\emulatorprojectchip-8\emulatorprojectchip-8\gameboy.h(24): warning C4305: 'initializing': truncation from 'int' to 'uint8_t'
+c:\users\adminuser.useradmin-pc\documents\visual studio 2015\projects\emulatorprojectchip-8\emulatorprojectchip-8\gameboy.h(24): warning C4309: 'initializing': truncation of constant value
 c:\users\adminuser.useradmin-pc\documents\visual studio 2015\projects\emulatorprojectchip-8\emulatorprojectchip-8\gameboy.h(27): warning C4305: 'initializing': truncation from 'int' to 'uint8_t'
 c:\users\adminuser.useradmin-pc\documents\visual studio 2015\projects\emulatorprojectchip-8\emulatorprojectchip-8\gameboy.h(27): warning C4309: 'initializing': truncation of constant value
 c:\users\adminuser.useradmin-pc\documents\visual studio 2015\projects\emulatorprojectchip-8\emulatorprojectchip-8\gameboy.h(28): warning C4305: 'initializing': truncation from 'int' to 'uint8_t'
 c:\users\adminuser.useradmin-pc\documents\visual studio 2015\projects\emulatorprojectchip-8\emulatorprojectchip-8\gameboy.h(28): warning C4309: 'initializing': truncation of constant value
-c:\users\adminuser.useradmin-pc\documents\visual studio 2015\projects\emulatorprojectchip-8\emulatorprojectchip-8\gameboy.cpp(708): warning C4333: '>>': right shift by too large amount, data loss
-c:\users\adminuser.useradmin-pc\documents\visual studio 2015\projects\emulatorprojectchip-8\emulatorprojectchip-8\gameboy.cpp(1166): warning C4101: 'n': unreferenced local variable
-c:\users\adminuser.useradmin-pc\documents\visual studio 2015\projects\emulatorprojectchip-8\emulatorprojectchip-8\gameboy.cpp(1166): warning C4101: 'readVal': unreferenced local variable
+c:\users\adminuser.useradmin-pc\documents\visual studio 2015\projects\emulatorprojectchip-8\emulatorprojectchip-8\gameboy.h(29): warning C4305: 'initializing': truncation from 'int' to 'uint8_t'
+c:\users\adminuser.useradmin-pc\documents\visual studio 2015\projects\emulatorprojectchip-8\emulatorprojectchip-8\gameboy.h(29): warning C4309: 'initializing': truncation of constant value
+c:\users\adminuser.useradmin-pc\documents\visual studio 2015\projects\emulatorprojectchip-8\emulatorprojectchip-8\gameboy.h(30): warning C4305: 'initializing': truncation from 'int' to 'uint8_t'
+c:\users\adminuser.useradmin-pc\documents\visual studio 2015\projects\emulatorprojectchip-8\emulatorprojectchip-8\gameboy.h(30): warning C4309: 'initializing': truncation of constant value
+c:\users\adminuser.useradmin-pc\documents\visual studio 2015\projects\emulatorprojectchip-8\emulatorprojectchip-8\gameboy.cpp(126): warning C4101: 'ex': unreferenced local variable
+c:\users\adminuser.useradmin-pc\documents\visual studio 2015\projects\emulatorprojectchip-8\emulatorprojectchip-8\gameboy.cpp(928): warning C4333: '>>': right shift by too large amount, data loss
+c:\users\adminuser.useradmin-pc\documents\visual studio 2015\projects\emulatorprojectchip-8\emulatorprojectchip-8\gameboy.cpp(1386): warning C4101: 'n': unreferenced local variable
+c:\users\adminuser.useradmin-pc\documents\visual studio 2015\projects\emulatorprojectchip-8\emulatorprojectchip-8\gameboy.cpp(1386): warning C4101: 'readVal': unreferenced local variable
   EmulatorProjectChip-8.vcxproj -> C:\Users\AdminUser.UserAdmin-PC\documents\visual studio 2015\Projects\EmulatorProjectChip-8\Debug\EmulatorProjectChip-8.exe
   EmulatorProjectChip-8.vcxproj -> C:\Users\AdminUser.UserAdmin-PC\documents\visual studio 2015\Projects\EmulatorProjectChip-8\Debug\EmulatorProjectChip-8.pdb (Partial PDB)
