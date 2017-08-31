@@ -31,6 +31,15 @@
     <Filter Include="Resource Files\General Purpose">
       <UniqueIdentifier>{f05c62aa-0ceb-4e30-8687-34c230c2b7f4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Resource Files\NES">
+      <UniqueIdentifier>{e9fd95db-1bea-48d4-bab9-e6a198fbff11}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\nes">
+      <UniqueIdentifier>{28737ebd-a3d6-4d1e-9952-88c442010cc1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\nes">
+      <UniqueIdentifier>{2cf05d05-0395-47d4-be4a-d8cb05d9d877}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="chip8.h">
@@ -48,6 +57,12 @@
     <ClInclude Include="mainGameboy.h">
       <Filter>Header Files\gameboy</Filter>
     </ClInclude>
+    <ClInclude Include="mainNES.h">
+      <Filter>Header Files\nes</Filter>
+    </ClInclude>
+    <ClInclude Include="NES.h">
+      <Filter>Header Files\nes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -64,6 +79,12 @@
     </ClCompile>
     <ClCompile Include="mainGameboy.cpp">
       <Filter>Source Files\gameboy</Filter>
+    </ClCompile>
+    <ClCompile Include="mainNES.cpp">
+      <Filter>Source Files\nes</Filter>
+    </ClCompile>
+    <ClCompile Include="NES.cpp">
+      <Filter>Source Files\nes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -85,6 +106,9 @@
     </Text>
     <Text Include="Info.txt">
       <Filter>Resource Files\General Purpose</Filter>
+    </Text>
+    <Text Include="datasheet-Ricoh-2A03-NES-technical_reference.txt">
+      <Filter>Resource Files\NES</Filter>
     </Text>
   </ItemGroup>
 </Project>

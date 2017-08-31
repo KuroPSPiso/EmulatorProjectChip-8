@@ -115,6 +115,8 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mainChip8.cpp" />
     <ClCompile Include="mainGameboy.cpp" />
+    <ClCompile Include="mainNES.cpp" />
+    <ClCompile Include="NES.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="chip8.h" />
@@ -122,6 +124,8 @@
     <ClInclude Include="gameboy.h_old" />
     <ClInclude Include="mainChip8.h" />
     <ClInclude Include="mainGameboy.h" />
+    <ClInclude Include="mainNES.h" />
+    <ClInclude Include="NES.h" />
   </ItemGroup>
   <ItemGroup>
     <Xml Include="gameboyOpCodes.xml" />
@@ -131,6 +135,7 @@
     <None Include="gb.opcode" />
   </ItemGroup>
   <ItemGroup>
+    <Text Include="datasheet-Ricoh-2A03-NES-technical_reference.txt" />
     <Text Include="GB-info.txt" />
     <Text Include="Info.txt" />
   </ItemGroup>
