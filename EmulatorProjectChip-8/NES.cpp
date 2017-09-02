@@ -31,9 +31,203 @@ void NES::RESET()
 	NES::InitilizeOpCodeTable();
 }
 
+int NES::powerUpSequence()
+{
+	int validCartridge = 1;
+
+	unsigned char NESValitdator[] = {
+		'N', 'E', 'S', 0x1A
+	};
+
+	printf("NESValitdator::");
+
+	for (int i = 0; i <= 0x03; i++)
+	{
+		std::string data_str;
+		char val[8];
+		snprintf(val, sizeof(val), "0x%d-", cartridge[i]);
+		data_str.append(val);
+		const char* data = data_str.c_str();
+		printf(data);
+
+		if (NESValitdator[i] != cartridge[i])
+		{
+			validCartridge = 0;
+		}
+	}
+
+	uint8_t numberOf16KRomBanks = cartridge[4]; //Size of PRG ROM in 16 KB units
+	uint8_t numberOf8KVRomBanks = cartridge[5]; //Size of CHR ROM in 8 KB units (Value 0 means the board uses CHR RAM)
+	uint8_t numberOf8KRamBanks = cartridge[8];	//Size of PRG RAM in 8 KB units (Value 0 infers 8 KB for compatibility; see PRG RAM circuit)
+	if (numberOf8KRamBanks == 0)
+	{
+		numberOf8KRamBanks = 1;
+	}
+
+	char flag6 = cartridge[6];
+	char flag7 = cartridge[7];
+	char flag9 = cartridge[9];
+
+	int Mirroring = ((flag6 >> 0) & 1);//1 for vertical mirroring, 0 for horizontal mirroring.
+	int BatteryBackedPRGRAM = ((flag6 >> 1) & 1);//1 for battery - backed RAM at $6000 - $7FFF.
+	int Trainer = ((flag6 >> 2) & 1);//1 for a 512 - byte trainer at $7000 - $71FF.
+	int FourScreenVRAM = ((flag6 >> 3) & 1);//1 for a four - screen VRAM layout. (Ignore mirroring control or above mirroring bit; instead provide four-screen VRAM)
+	int NESv2Format = 0;
+	int VS = ((flag7 >> 0) & 1);
+	int Region1 = 0;
+	for (int n = 4; n < 7; n++)
+	{
+	//Four lower bits of ROM Mapper Type.
+	}
+
+	for (int n = 1; n < 7; n++)
+	{
+		if(n >= 1 && n <= 3) //RESERVED, MUST BE 0
+		{
+			if (n == 2) //NEW ADDITION
+			{
+				NESv2Format = ((flag7 >> n) & 1) + ((flag7 >> n + 1) & 1);
+			}
+		}
+		else if (n >= 4 && n <= 7) //Four higher bits of ROM Mapper Type.
+		{
+
+		}
+	}
+
+	for (int n = 0; n < 7; n++)
+	{
+		if (n == 0) //REGION
+		{
+			Region1 = (flag9 >> n) & 1;
+			switch (Region1)
+			{
+			case 1:
+				//PAL
+				printf("PAL REGION-");
+				break;
+			default:
+				//NTSC
+				printf("NTSC REGION-");
+				break;
+			}
+		}
+		else //RESERVED, MUST BE 0
+		{
+			if (((flag9 >> n) & 1) != 0)
+			{
+				validCartridge = 0;
+			}
+		}
+	}
+
+	for (int i = 10; i < 15; i++) //RESERVED, MUST BE 0
+	{
+		if (cartridge[i] != 0 && NESv2Format == 0)
+		{
+			validCartridge = 0;
+		}
+	}
+
+	uint16_t prgLocation = 0x8000;
+	int prgSize = numberOf16KRomBanks * 16 * 1024;
+	uint16_t chrLocation = 0x0000;
+	int chrSize = numberOf16KRomBanks * 8 * 1024;
+
+	return validCartridge;
+}
+
 bool NES::loadApplication(const char * filename)
 {
-	return false;
+	RESET();
+	//open file
+	FILE* appFile;
+	errno_t err;
+	if (err = fopen_s(&appFile, filename, "rb")) //binary mode
+	{
+		try
+		{
+			char buf[4096]; //might requirefix
+			strerror_s(buf, sizeof buf, err);
+			fprintf_s(stderr, "cannot open file '%s': %s\n",
+				filename, buf);
+		}
+		catch (const std::exception& ex)
+		{
+			//error on errormessage
+		}
+
+		return false;
+	}
+
+	if (appFile == NULL)
+	{
+		fputs("Failed to open file", stderr);
+		return false;
+	}
+
+	//check file size
+	fseek(appFile, 0, SEEK_END);	//load full file
+	long lSize = ftell(appFile);	//save loaded size
+	rewind(appFile);				//reset file to position 0
+
+									// Allocate memory to contain the whole file
+	char * buffer = (char*)malloc(sizeof(char) * lSize);
+	if (buffer == NULL)
+	{
+		fputs("Memory error", stderr);
+		return false;
+	}
+
+	// Copy the file into the buffer
+	size_t result = fread(buffer, 1, lSize, appFile);
+	if (result != lSize)
+	{
+		fputs("Reading error", stderr);
+		return false;
+	}
+
+	/*
+	// Copy buffer to Gameboy memory
+	if ((__MAX_RAM) <= lSize)
+	{
+	for (int i = 0; i < lSize; ++i)
+	{
+	memory[i + __SLOT_0] = buffer[i];
+	}
+	}
+	else
+	{
+	printf("Error: ROM too big for memory");
+	}*/
+
+	if ((sizeof(cartridge)) >= lSize)
+	{
+		for (int i = 0; i < lSize; ++i)
+		{
+			cartridge[i] = buffer[i];
+		}
+
+		if (powerUpSequence() == 1)
+		{
+			for (int i = 0; i < sizeof(cartridge); i++)
+			{
+				memory[/*0x4000 **/ i] = cartridge[i];
+			}
+		}
+	}
+	else
+	{
+		printf("Error: ROM is not a cartridge");
+	}
+
+	printf("Success: ROM has loaded");
+
+	// Close file, free buffer
+	fclose(appFile);
+	free(buffer);
+
+	return true;
 }
 
 void NES::debugDisplay()
@@ -44,6 +238,14 @@ uint8_t NES::fetch()
 {
 	uint8_t data = memory[cpuRegistery.pc];
 	cpuRegistery.pc++; //next process step
+	return data;
+}
+
+uint16_t NES::fetch16()
+{
+	uint16_t data = memory[cpuRegistery.pc];
+	data |= (memory[cpuRegistery.pc] << 8);
+	cpuRegistery.pc+=2; //next process step
 	return data;
 }
 
@@ -443,6 +645,7 @@ int NES::LDA(const AddressingMode &mode) {
 		cycleTime = 5;
 		break;
 	default:
+		this->cpuRegistery.registery.A = fetch();
 		break;
 	}
 

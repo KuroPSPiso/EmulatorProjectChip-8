@@ -11,7 +11,7 @@ public:
 
 	uint8_t opcode;							//current opcode (2-bit)
 	unsigned char memory[65536];			//64k memory << 16k rombank (part of cartrigde) #0000, 16k switchable rombank (part of cartrigde) #4000, 8k video ram #8000, 8k switchable memory bus (ram) #A000, 8k internal Memory bus (ram) #C000, 7k echo of 8k ram (internal) #E000, 160b sprite attribute memory #FE00, 96b empty #FEA0, 252b i/o ports #FF00, 52b empty #FF4C, 126b internal ram #FF80, 1b interrupt enable register #FFFF
-
+	unsigned char cartridge[65536];			//TODO: temp load
 											//unsigned char V[16];					//cpu registers, 0-14 = general purpose registers, 15 = carry flag
 
 											//Flag register GB
@@ -97,7 +97,8 @@ public:
 #pragma region Cycle Handling
 	void NES::emulateCycle();
 	void NES::RESET();
-
+	
+	int NES::powerUpSequence();
 	bool NES::loadApplication(const char * filename);
 	void NES::debugDisplay();
 	const uint8_t& NES::read(const uint16_t &address);
@@ -113,6 +114,7 @@ public:
 
 private:
 	uint8_t NES::fetch();
+	uint16_t NES::fetch16();
 
 	void NES::SET_ZN(const char &value);
 	void NES::SET_NEGATIVE(const char &value);
