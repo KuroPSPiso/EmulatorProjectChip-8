@@ -18,7 +18,7 @@ public:
 
 	enum AddressingMode {
 		Accumulator,
-		Inmediate,
+		Immediate,
 		ZeroPage,
 		ZeroPageX,
 		ZeroPageY,
@@ -28,6 +28,12 @@ public:
 		IndexedIndirectX,
 		IndirectIndexedY,
 		Indirect
+	};
+
+	/*On = Vertical, Off = Horizontal*/
+	enum MirroringState {
+		Vertical,
+		Horizontal
 	};
 
 	union GeneralRegisters
@@ -50,7 +56,7 @@ public:
 		struct
 		{
 			//FLAGS
-			char	C,	//carry					0
+			bool	C,	//carry					0
 					Z,	//zero					1
 					I,	//interupt disable		2
 					D,	//decimal mode			3
@@ -62,6 +68,27 @@ public:
 		};
 	};
 
+	union SystemBehaviour //Based on data collected from cartridge
+	{
+		struct
+		{
+			uint8_t numberOf16KRomBanks; //Size of PRG ROM in 16 KB units
+			uint8_t numberOf8KVRomBanks; //Size of CHR ROM in 8 KB units (Value 0 means the board uses CHR RAM)
+			uint8_t numberOf8KRamBanks;	//Size of PRG RAM in 8 KB units (Value 0 infers 8 KB for compatibility; see PRG RAM circuit)
+			MirroringState Mirroring;//1 for vertical mirroring, 0 for horizontal mirroring.
+			bool BatteryBackedPRGRAM;//1 for battery - backed RAM at $6000 - $7FFF.
+			bool Trainer;//1 for a 512 - byte trainer at $7000 - $71FF.
+			bool FourScreenVRAM;//1 for a four - screen VRAM layout. (Ignore mirroring control or above mirroring bit; instead provide four-screen VRAM)
+			bool NESv2Format;
+			bool VS;
+			bool Region1; //region 1 = PAL , all other should be NTCS
+			uint16_t prgLocation; //CPU start
+			int prgSize; //CPU space allocation
+			uint16_t chrLocation; //PPU start
+			int chrSize; //PPU space allocation
+		};
+	};
+
 	struct Registers
 	{
 		uint16_t	pc;	//program counter
@@ -69,13 +96,14 @@ public:
 		uint16_t sp;	//stack pointer (current stack in use)
 		P p;			//processor status - flags
 
-		GeneralRegisters registery;
+		GeneralRegisters registry;
+		SystemBehaviour systemBehaviour;
 
 	};
 
 	bool NMI_ENABLED, NMI_EDGE_DETECTED, INTERUPT = false;
 
-	Registers cpuRegistery;
+	Registers cpuRegistry;
 
 #pragma region Pin Functions
 	uint16_t AddressBus;
@@ -115,10 +143,39 @@ public:
 private:
 	uint8_t NES::fetch();
 	uint16_t NES::fetch16();
+	//uint16_t NES::fetch16IX();
+	//uint16_t NES::fetch16IY();
+	//uint16_t NES::fetch16ZX();
+	//uint16_t NES::fetch16ZY();
+	//uint16_t NES::fetch16AX();
+
+	//fetches data
+	uint8_t NES::getImmeditate_u8();
+	//fetches address space
+	uint8_t NES::getZeroPage_u8();
+	//fetches address space
+	uint8_t NES::getZeroPage_u8(char registry);
+	//fetches address space
+	uint16_t NES::getAbsolute_u16();
+	//fetches address space
+	uint16_t NES::getAbsolute_u16(char registry);
+	//fetches address space
+	uint8_t NES::getIndirectX_u8();
+	//fetches address space
+	uint8_t NES::getIndirectY_u8();
+	uint16_t NES::getDataFromMode_u16(const AddressingMode &mode);
+
+
+	void NES::push(uint16_t);
+	uint16_t NES::pull();
 
 	void NES::SET_ZN(const char &value);
 	void NES::SET_NEGATIVE(const char &value);
+	void NES::SET_NEGATIVE();
+	void NES::UNSET_NEGATIVE();
 	void NES::SET_ZERO(const char &value);
+	uint8_t NES::P_READ();							//Transform custom P to byte.
+	void NES::P_WRITE(const uint8_t &M);		//Transform byte to custom P.
 
 	void NES::InitilizeOpCodeTable();
 	uint8_t NES::decodeOPCode(const uint8_t &opcode);
@@ -319,6 +376,8 @@ private:
 	int CLI(); //Clear interrupt Disable Bit								--Implied
 	int CLV(); //Clear Overflow Flag										--Implied
 
+	int NES::CMP_ALL(const AddressingMode &mode, char reg); //COMPARE ALL -- Unofficial
+
 	int CMP(const AddressingMode &mode); //Compare M AND A
 	int CMPI();
 	int CMPZP();
@@ -342,6 +401,7 @@ private:
 	int SEC(); //Set Carry Flag												--Implied
 	int SED(); //Set Decimal Mode											--Implied
 	int SEI(); //Set Interrupt Disable Status								--Implied
+	int SEV(); //Set overflow --UNOFFICIAL
 #pragma endregion Registers
 
 
@@ -363,6 +423,7 @@ private:
 
 
 #pragma region Unofficial/Illegal
+	//Do not integrate (now)
 	int KILL();
 	int SLO();
 	int ASL();

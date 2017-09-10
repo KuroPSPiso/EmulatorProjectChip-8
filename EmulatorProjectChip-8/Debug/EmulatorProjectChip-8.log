@@ -1,6 +1,3 @@
-﻿  NES.cpp
-e:\github\emulatorprojectchip-8\emulatorprojectchip-8\nes.cpp(89): warning C4554: '>>': check operator precedence for possible error; use parentheses to clarify precedence
-e:\github\emulatorprojectchip-8\emulatorprojectchip-8\nes.cpp(150): warning C4101: 'ex': unreferenced local variable
-e:\github\emulatorprojectchip-8\emulatorprojectchip-8\nes.cpp(247): warning C4554: '&': check operator precedence for possible error; use parentheses to clarify precedence
+﻿  main.cpp
   EmulatorProjectChip-8.vcxproj -> E:\Github\EmulatorProjectChip-8\Debug\EmulatorProjectChip-8.exe
   EmulatorProjectChip-8.vcxproj -> E:\Github\EmulatorProjectChip-8\Debug\EmulatorProjectChip-8.pdb (Partial PDB)

@@ -104,14 +104,13 @@ int mainNES::run()
 	loadApplication();
 	setupGraphics();
 	system("cls");
-	__NES.RESET();
+	//__NES.RESET();
 
 	// System emulation
 	for (;;)
 	{
 		__NES.emulateCycle(); //execute one cycle
-
-
+		
 		if (__NES.drawFlag) //on draw flag update screen
 		{
 			drawGraphics();

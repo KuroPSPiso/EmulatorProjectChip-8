@@ -17,18 +17,32 @@ const uint8_t& NES::read(const uint16_t &address)
 	return memory[address];
 }
 
+
+
 void NES::emulateCycle()
 {
+	int pc = cpuRegistry.pc;
 	opcode = fetch();
-	decodeOPCode(opcode);
 
-	//TODO: remove here
-	printf(NESOpCodeTableNames[opcode]);
+	printf(NESOpCodeTableNames[opcode]);//TODO: remove this
+
+	int cycleTime = decodeOPCode(opcode);
+
+	if(
+		opcode != 0x28 &&
+		opcode != 0x00 &&
+		opcode != 0x4C &&
+		opcode != 0x20
+	) //PLP, //BRK, //JMP, //JSR (opcode will be changed within the methods)
+	cpuRegistry.pc = pc + cycleTime;
+
 }
 
 void NES::RESET()
 {
 	NES::InitilizeOpCodeTable();
+
+	cpuRegistry.sp = 0x01FF;
 }
 
 int NES::powerUpSequence()
@@ -132,7 +146,23 @@ int NES::powerUpSequence()
 	uint16_t prgLocation = 0x8000;
 	int prgSize = numberOf16KRomBanks * 16 * 1024;
 	uint16_t chrLocation = 0x0000;
-	int chrSize = numberOf16KRomBanks * 8 * 1024;
+	int chrSize = numberOf8KVRomBanks * 8 * 1024;
+	if (numberOf8KVRomBanks = 0) chrSize = 1 * 8 * 1024; //supposingly it's only 8k in size
+
+	cpuRegistry.systemBehaviour.BatteryBackedPRGRAM = BatteryBackedPRGRAM;
+	cpuRegistry.systemBehaviour.chrLocation = chrLocation;
+	cpuRegistry.systemBehaviour.chrSize = chrSize;
+	cpuRegistry.systemBehaviour.FourScreenVRAM = FourScreenVRAM;
+	cpuRegistry.systemBehaviour.Mirroring = (Mirroring == 0) ? Horizontal : Vertical;
+	cpuRegistry.systemBehaviour.NESv2Format = NESv2Format;
+	cpuRegistry.systemBehaviour.numberOf16KRomBanks = numberOf16KRomBanks;
+	cpuRegistry.systemBehaviour.numberOf8KRamBanks = numberOf8KRamBanks;
+	cpuRegistry.systemBehaviour.numberOf8KVRomBanks = numberOf8KVRomBanks;
+	cpuRegistry.systemBehaviour.prgLocation = prgLocation;
+	cpuRegistry.systemBehaviour.prgSize = prgSize;
+	cpuRegistry.systemBehaviour.Region1 = Region1;
+	cpuRegistry.systemBehaviour.Trainer = Trainer;
+	cpuRegistry.systemBehaviour.VS = VS;
 
 	return validCartridge;
 }
@@ -214,6 +244,11 @@ bool NES::loadApplication(const char * filename)
 			{
 				memory[/*0x4000 **/ i] = cartridge[i];
 			}
+
+			//set pc to 0x8000 (expected)
+			cpuRegistry.pc = cpuRegistry.systemBehaviour.prgLocation;
+			//exec jmp first time for allocating the correct start pos (?)
+			JMPI();
 		}
 	}
 	else
@@ -236,18 +271,132 @@ void NES::debugDisplay()
 
 uint8_t NES::fetch()
 {
-	uint8_t data = memory[cpuRegistery.pc];
-	cpuRegistery.pc++; //next process step
+	uint8_t data = memory[cpuRegistry.pc];
+	cpuRegistry.pc++; //next process step
 	return data;
 }
 
+
 uint16_t NES::fetch16()
 {
-	uint16_t data = memory[cpuRegistery.pc];
-	data |= (memory[cpuRegistery.pc] << 8);
-	cpuRegistery.pc+=2; //next process step
+
+	uint8_t slot0 = memory[cpuRegistry.pc];
+	uint8_t slot1 = memory[cpuRegistry.pc+1];
+
+	uint16_t data = 0x0000;
+
+#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+	data |= slot0;
+	data |= (slot1 << 8);
+#else
+	data |= slot1;
+	data |= (slot0 << 8);
+#endif
+	cpuRegistry.pc += 2; //next process step
 	return data;
 }
+
+#pragma region Obsolete fetch
+/*
+uint16_t NES::fetch16()
+{
+uint16_t data = memory[cpuRegistery.pc];
+data |= (memory[cpuRegistery.pc] << 8);
+cpuRegistery.pc+=2; //next process step
+return data;
+}*/
+//uint16_t NES::fetch16IX()
+//{
+//
+//	uint8_t slot0 = memory[cpuRegistery.pc];
+//	uint8_t slot1 = memory[cpuRegistery.pc + 1];
+//
+//	uint16_t data = 0x0000;
+//
+//#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+//	data |= slot0;
+//	data |= (slot1 << 8);
+//#else
+//	data |= slot1;
+//	data |= (slot0 << 8);
+//#endif
+//	cpuRegistery.pc += 2; //next process step
+//	return data;
+//}
+//uint16_t NES::fetch16IY()
+//{
+//
+//	uint8_t slot0 = memory[cpuRegistery.pc];
+//	uint8_t slot1 = memory[cpuRegistery.pc + 1];
+//
+//	uint16_t data = 0x0000;
+//
+//#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+//	data |= slot0;
+//	data |= (slot1 << 8);
+//#else
+//	data |= slot1;
+//	data |= (slot0 << 8);
+//#endif
+//	cpuRegistery.pc += 2; //next process step
+//	return data;
+//}
+//
+//uint16_t NES::fetch16ZX()
+//{
+//
+//	uint8_t slot0 = memory[cpuRegistery.pc];
+//	uint8_t slot1 = memory[cpuRegistery.pc + 1];
+//
+//	uint16_t data = 0x0000;
+//
+//#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+//	data |= slot0;
+//	data |= (slot1 << 8);
+//#else
+//	data |= slot1;
+//	data |= (slot0 << 8);
+//#endif
+//	cpuRegistery.pc += 2; //next process step
+//	return data;
+//}
+//uint16_t NES::fetch16ZY()
+//{
+//
+//	uint8_t slot0 = memory[cpuRegistery.pc];
+//	uint8_t slot1 = memory[cpuRegistery.pc + 1];
+//
+//	uint16_t data = 0x0000;
+//
+//#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+//	data |= slot0;
+//	data |= (slot1 << 8);
+//#else
+//	data |= slot1;
+//	data |= (slot0 << 8);
+//#endif
+//	cpuRegistery.pc += 2; //next process step
+//	return data;
+//}
+//uint16_t NES::fetch16AX()
+//{
+//
+//	uint8_t slot0 = memory[cpuRegistery.pc];
+//	uint8_t slot1 = memory[cpuRegistery.pc + 1];
+//
+//	uint16_t data = 0x0000;
+//
+//#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+//	data |= slot0;
+//	data |= (slot1 << 8);
+//#else
+//	data |= slot1;
+//	data |= (slot0 << 8);
+//#endif
+//	cpuRegistery.pc += 2; //next process step
+//	return data;
+//}
+#pragma endregion Obsolete fetch
 
 
 void NES::SET_ZN(const char &value)
@@ -259,23 +408,168 @@ void NES::SET_NEGATIVE(const char &value)
 {
 	if (value & 0x80 != 0)
 	{
-		this->cpuRegistery.p.N = 1;
+		this->cpuRegistry.p.N = 1;
 	}
 	else
 	{
-		this->cpuRegistery.p.N = 0;
+		this->cpuRegistry.p.N = 0;
 	}
+}
+void NES::SET_NEGATIVE()
+{
+	this->cpuRegistry.p.N = 1;
+}
+void NES::UNSET_NEGATIVE()
+{
+	this->cpuRegistry.p.N = 1;
 }
 void NES::SET_ZERO(const char &value) 
 {
 	if (value == 0)
 	{
-		cpuRegistery.p.Z = 1;
+		cpuRegistry.p.Z = 1;
 	}
 	else 
 	{
-		cpuRegistery.p.Z = 0;
+		cpuRegistry.p.Z = 0;
 	}
+}
+//Transform custom P to byte.
+uint8_t NES::P_READ()							
+{
+	uint8_t SR = 0x00;
+	SR |= cpuRegistry.p.C;//carry					0
+	SR |= cpuRegistry.p.Z << 1;//zero					1
+	SR |= cpuRegistry.p.I << 2; //interupt disable		2
+	SR |= cpuRegistry.p.D << 3;//decimal mode			3
+	SR |= cpuRegistry.p.B << 4;	//break command			4
+	SR |= cpuRegistry.p.U << 5;//unused||empty state	5
+	SR |= cpuRegistry.p.V << 6;//overflow				6
+	SR |= cpuRegistry.p.N << 7;//negative				7
+	return SR;
+}
+//Transform byte to custom P.
+void NES::P_WRITE(const uint8_t &M)		
+{
+	cpuRegistry.p.C = (M) & 1;//carry					0
+	cpuRegistry.p.Z = (M >> 1) & 1;//zero					1
+	cpuRegistry.p.I = (M >> 2) & 1; //interupt disable		2
+	cpuRegistry.p.D = (M >> 3) & 1;//decimal mode			3
+	cpuRegistry.p.B = (M >> 4) & 1;	//break command			4
+	cpuRegistry.p.U = (M >> 5) & 1;//unused||empty state	5
+	cpuRegistry.p.V = (M >> 6) & 1;//overflow				6
+	cpuRegistry.p.N = (M >> 7) & 1;//negative				7
+}
+
+uint8_t NES::getImmeditate_u8(){ return fetch(); }
+uint8_t NES::getZeroPage_u8(){
+	uint8_t zpd = fetch();
+	return memory[zpd];
+}
+uint8_t NES::getZeroPage_u8(char registry) {
+	uint8_t reg;
+
+	switch (registry)
+	{
+	case 'X':
+		reg = cpuRegistry.registry.X;
+		break;
+	case 'Y':
+		reg = cpuRegistry.registry.Y;
+		break;
+	}
+	uint8_t zpd = fetch() + reg; //check x
+	return memory[zpd];
+}
+uint16_t NES::getAbsolute_u16(){
+	uint16_t ad = fetch16();
+	return memory[ad];
+}
+uint16_t NES::getAbsolute_u16(char registry){
+	uint8_t reg;
+	
+	switch(registry)
+	{
+	case 'X':
+		reg = cpuRegistry.registry.X;
+		break;
+	case 'Y':
+		reg = cpuRegistry.registry.Y;
+		break;
+	}
+
+	uint16_t ad = fetch16() + reg;
+	return ad;
+}
+uint8_t NES::getIndirectX_u8(){
+	uint8_t inzp = fetch() + cpuRegistry.registry.X;
+	uint8_t idl = memory[inzp];
+	uint8_t idh = memory[inzp + 1];
+	//TODO: little/big endian comparer (currently in little endian format)
+	
+	uint16_t id;
+	id |= idl;
+	id |= (idh << 8);
+	return memory[id];
+}
+uint8_t NES::getIndirectY_u8(){
+	uint8_t inzp = fetch();
+	uint8_t idl = memory[inzp];
+	uint8_t idh = memory[inzp + 1];
+	//TODO: little/big endian comparer (currently in little endian format)	
+	uint16_t id;
+	id |= idl;
+	id |= (idh << 8);
+	id = id + cpuRegistry.registry.Y;
+	return id;
+}
+
+uint16_t NES::getDataFromMode_u16(const AddressingMode &mode) {
+
+	//TODO: think of better format to select between fetching address space or memory.
+	/*
+	the data can both be used directly and as allocation of an address space.
+	the best thing to do is to alter the fetch to return the address instead of the value.
+	data will be returned as a 16 bit byte. this should then be used as memory=[&r16bit].
+
+	or data should be treated per type.
+
+	if(immediate) {direct} else {address}
+	*/
+
+	uint16_t data = NULL;
+
+	switch (mode)
+	{
+	case ZeroPage:
+		data = getZeroPage_u8();
+		break;
+	case ZeroPageX:
+		data = getZeroPage_u8('X');
+		break;
+	case ZeroPageY:
+		data = getZeroPage_u8('Y');
+		break;
+	case Absolute:
+		data = getAbsolute_u16();
+		break;
+	case AbsoluteX:
+		data = getAbsolute_u16('X');
+		break;
+	case AbsoluteY:
+		data = getAbsolute_u16('Y');
+		break;
+	case IndexedIndirectX:
+		data = getIndirectX_u8();
+		break;
+	case IndirectIndexedY:
+		data = getIndirectY_u8();
+		break;
+	default:
+		getImmeditate_u8();
+		break;
+	}
+	return data; //16 bit data should shift the low bytes into a 8 bit value.
 }
 
 uint8_t NES::decodeOPCode(const uint8_t &opcode)
@@ -620,38 +914,51 @@ void NES::InitilizeOpCodeTable()
 //Load A with M
 int NES::LDA(const AddressingMode &mode) { 
 	int cycleTime = 2; 
+	uint8_t A = 0x00;
 
 	switch (mode)
 	{
 	case ZeroPage:
 		cycleTime = 3;
+		A = memory[getZeroPage_u8()];
+		//TODO: set pc? 
 		break;
 	case ZeroPageX:
 		cycleTime = 4;
+		A = memory[getZeroPage_u8('X')];
 		break;
 	case Absolute:
 		cycleTime = 4;
+		A = memory[getAbsolute_u16()];
 		break;
 	case AbsoluteX:
 		cycleTime = 4;
+		A = memory[getAbsolute_u16('X')];
 		break;
 	case AbsoluteY:
 		cycleTime = 4;
+		A = memory[getAbsolute_u16('Y')];
 		break;
 	case IndexedIndirectX:
 		cycleTime = 6;
+		A = memory[getIndirectX_u8()];
 		break;
 	case IndirectIndexedY:
 		cycleTime = 5;
+		A = memory[getIndirectY_u8()];
 		break;
 	default:
-		this->cpuRegistery.registery.A = fetch();
+		A = getImmeditate_u8();
 		break;
 	}
 
+	cpuRegistry.registry.A = A;
+	SET_ZN(cpuRegistry.registry.A);
+
+
 	return cycleTime; 
 } 
-int NES::LDAI() { return LDA(Inmediate); }
+int NES::LDAI() { return LDA(Immediate); }
 int NES::LDAZP() { return LDA(ZeroPage); }
 int NES::LDAZPX() { return LDA(ZeroPageX); }
 int NES::LDAA() { return LDA(Absolute); }
@@ -663,27 +970,37 @@ int NES::LDAIY() { return LDA(IndirectIndexedY); }
 //Load X with M
 int NES::LDX(const AddressingMode &mode) { 
 	int cycleTime = 2;
+	uint8_t X = 0x00;
 
 	switch (mode)
 	{
 	case ZeroPage:
 		cycleTime = 3;
+		X = memory[getZeroPage_u8()];
 		break;
 	case ZeroPageY:
 		cycleTime = 4;
+		X = memory[getZeroPage_u8('Y')];
 		break;
 	case Absolute:
 		cycleTime = 4;
+		X = memory[getAbsolute_u16()];
 		break;
 	case AbsoluteY:
 		cycleTime = 4;
+		X = memory[getAbsolute_u16('Y')];
 		break;
 	default:
+		X = fetch();
 		break;
 	}
+
+	cpuRegistry.registry.X = X;
+	SET_ZN(cpuRegistry.registry.X);
+
 	return cycleTime; 
 }
-int NES::LDXI() { return LDX(Inmediate); }
+int NES::LDXI() { return LDX(Immediate); }
 int NES::LDXZP() { return LDX(ZeroPage); }
 int NES::LDXZPY() { return LDX(ZeroPageY); }
 int NES::LDXA() { return LDX(Absolute); }
@@ -692,27 +1009,37 @@ int NES::LDXAY() { return LDX(AbsoluteY); }
 //Load Y with M
 int NES::LDY(const AddressingMode &mode) { 
 	int cycleTime = 2;
+	uint8_t Y = 0x00;
 
 	switch (mode)
 	{
 	case ZeroPage:
 		cycleTime = 3;
+		Y = memory[getZeroPage_u8()];
 		break;
 	case ZeroPageX:
 		cycleTime = 4;
+		Y = memory[getZeroPage_u8('X')];
 		break;
 	case Absolute:
 		cycleTime = 4;
+		Y = memory[getAbsolute_u16()];
 		break;
 	case AbsoluteX:
 		cycleTime = 4;
+		Y = memory[getAbsolute_u16('X')];
 		break;
 	default:
+		Y = fetch();
 		break;
 	}
+
+	cpuRegistry.registry.Y = Y;
+	SET_ZN(cpuRegistry.registry.Y);
+
 	return cycleTime; 
 } 
-int NES::LDYI() { return LDY(Inmediate); }
+int NES::LDYI() { return LDY(Immediate); }
 int NES::LDYZP() { return LDY(ZeroPage); }
 int NES::LDYZPX() { return LDY(ZeroPageX); }
 int NES::LDYA() { return LDY(Absolute); }
@@ -842,10 +1169,51 @@ int NES::TYA() {
 #pragma region Math
 //Add M to A with Carry
 int NES::ADC(const AddressingMode &mode) { 
-	int cycleTime = 2; 
+	int cycleTime = 2;
+	uint8_t M = NULL;
+
+	switch (mode)
+	{
+	case ZeroPage:
+		cycleTime = 3;
+		M = memory[getZeroPage_u8()];
+		break;
+	case ZeroPageX:
+		cycleTime = 4;
+		M = memory[getZeroPage_u8('X')];
+		break;
+	case Absolute:
+		cycleTime = 4;
+		M = memory[getAbsolute_u16()];
+		break;
+	case AbsoluteX:
+		cycleTime = 4;
+		M = memory[getAbsolute_u16('X')];
+		break;
+	case AbsoluteY:
+		cycleTime = 4;
+		M = memory[getAbsolute_u16('Y')];
+		break;
+	case IndexedIndirectX:
+		cycleTime = 6;
+		M = memory[getIndirectX_u8()];
+		break;
+	case IndirectIndexedY:
+		cycleTime = 5;
+		M = memory[getIndirectY_u8()];
+		break;
+	default:
+		M = getImmeditate_u8();
+		break;
+	}
+
+	cpuRegistry.registry.A = cpuRegistry.registry.A + M + cpuRegistry.p.C;
+	//TODO: check how to set carry
+	SET_ZN(cpuRegistry.registry.A);
+
 	return cycleTime; 
 } 
-int NES::ADCI() { return ADC(Inmediate); }
+int NES::ADCI() { return ADC(Immediate); }
 int NES::ADCZP() { return ADC(ZeroPage); }
 int NES::ADCZPX() { return ADC(ZeroPageX); }
 int NES::ADCA() { return ADC(Absolute); }
@@ -855,34 +1223,119 @@ int NES::ADCIX() { return ADC(IndexedIndirectX); }
 int NES::ADCIY() { return ADC(IndirectIndexedY); }
 
 //Decrement M by One
-int NES::DEC(const AddressingMode &mode) { int cycleTime = 2; return cycleTime; } 
+int NES::DEC(const AddressingMode &mode) { 
+	int cycleTime = 2;
+	uint16_t M = NULL;
+
+	switch (mode)
+	{
+	case ZeroPage:
+		cycleTime = 5;
+		M = getZeroPage_u8();
+		break;
+	case ZeroPageX:
+		cycleTime = 6;
+		M = getZeroPage_u8('X');
+		break;
+	case Absolute:
+		cycleTime = 6;
+		M = getAbsolute_u16();
+		break;
+	case AbsoluteX:
+		cycleTime = 7;
+		M = getAbsolute_u16('X');
+		break;
+	}
+
+	subtract(M, 1);
+
+	return cycleTime; 
+} 
 int NES::DECZP() { return DEC(ZeroPage); }
 int NES::DECZPX() { return DEC(ZeroPageX); }
 int NES::DECA() { return DEC(Absolute); }
 int NES::DECAX() { return DEC(AbsoluteX); }
 
 //Decrement X by One											--Implied
-int NES::DEX() { int cycleTime = 2; return cycleTime; } 
+int NES::DEX() { int cycleTime = 2; cpuRegistry.registry.X -= 1; return cycleTime; }
 
 //Decrement Y by One											--Implied
-int NES::DEY() { int cycleTime = 2; return cycleTime; } 
+int NES::DEY() { int cycleTime = 2; cpuRegistry.registry.Y -= 1; return cycleTime; }
 
 //Increment M by One
-int NES::INC(const AddressingMode &mode) { int cycleTime = 2; return cycleTime; } 
+int NES::INC(const AddressingMode &mode) { 
+	int cycleTime = 2;
+	uint16_t M = NULL;
+
+	switch (mode)
+	{
+	case ZeroPage:
+		cycleTime = 5;
+		M = getZeroPage_u8();
+		break;
+	case ZeroPageX:
+		cycleTime = 6;
+		M = getZeroPage_u8('X');
+		break;
+	case Absolute:
+		cycleTime = 6;
+		M = getAbsolute_u16();
+		break;
+	case AbsoluteX:
+		cycleTime = 7;
+		M = getAbsolute_u16('X');
+		break;
+	}
+
+	add(M, 1);
+
+	return cycleTime; 
+} 
 int NES::INCZP() { return INC(ZeroPage); }
 int NES::INCZPX() { return INC(ZeroPageX); }
 int NES::INCA() { return INC(Absolute); }
 int NES::INCAX() { return INC(AbsoluteX); }
 
 //Increment X by One											--Implied
-int NES::INX() { int cycleTime = 2; return cycleTime; } 
+int NES::INX() { int cycleTime = 2; cpuRegistry.registry.X += 1; return cycleTime; }
 
 //Increment Y by One											--Implied
-int NES::INY() { int cycleTime = 2; return cycleTime; } 
+int NES::INY() { int cycleTime = 2; cpuRegistry.registry.Y += 1; return cycleTime; }
 
 //Subtract M from A with Borrow
-int NES::SBC(const AddressingMode &mode) { int cycleTime = 2; return cycleTime; } 
-int NES::SBCI() { return SBC(Inmediate); }
+int NES::SBC(const AddressingMode &mode) { 
+	int cycleTime = 2;
+
+	switch (mode)
+	{
+	case ZeroPage:
+		cycleTime = 3;
+		break;
+	case ZeroPageX:
+		cycleTime = 4;
+		break;
+	case Absolute:
+		cycleTime = 4;
+		break;
+	case AbsoluteX:
+		cycleTime = 4;
+		break;
+	case AbsoluteY:
+		cycleTime = 4;
+		break;
+	case IndexedIndirectX:
+		cycleTime = 6;
+		break;
+	case IndirectIndexedY:
+		cycleTime = 5;
+		break;
+	default:
+		break;
+	}
+	
+	return cycleTime; 
+} 
+int NES::SBCI() { return SBC(Immediate); }
 int NES::SBCZP() { return SBC(ZeroPage); }
 int NES::SBCZPX() { return SBC(ZeroPageX); }
 int NES::SBCA() { return SBC(Absolute); }
@@ -896,8 +1349,50 @@ int NES::SBCIY() { return SBC(IndirectIndexedY); }
 
 #pragma region Bitwise
 
-int NES::AND(const AddressingMode &mode) { int cycleTime = 2; return cycleTime; } //"AND" M with A
-int NES::ANDI() { return AND(Inmediate); }
+int NES::AND(const AddressingMode &mode) { 
+	int cycleTime = 2;
+	uint8_t M = NULL;
+
+	switch (mode)
+	{
+	case ZeroPage:
+		cycleTime = 3;
+		M = getZeroPage_u8();
+		break;
+	case ZeroPageX:
+		cycleTime = 4;
+		M = getZeroPage_u8('X');
+		break;
+	case Absolute:
+		cycleTime = 4;
+		M = getAbsolute_u16();
+		break;
+	case AbsoluteX:
+		cycleTime = 4;
+		M = getAbsolute_u16('X');
+		break;
+	case AbsoluteY:
+		cycleTime = 4;
+		M = getAbsolute_u16('Y');
+		break;
+	case IndexedIndirectX:
+		cycleTime = 6;
+		M = getIndirectX_u8();
+		break;
+	case IndirectIndexedY:
+		cycleTime = 5;
+		M = getIndirectY_u8();
+		break;
+	default:
+		M = getImmeditate_u8();
+		break;
+	}
+	cpuRegistry.registry.A = cpuRegistry.registry.A && M;
+	SET_ZN(cpuRegistry.registry.A);
+
+	return cycleTime; 
+} //"AND" M with A
+int NES::ANDI() { return AND(Immediate); }
 int NES::ANDZP() { return AND(ZeroPage); }
 int NES::ANDZPX() { return AND(ZeroPageX); }
 int NES::ANDA() { return AND(Absolute); }
@@ -907,7 +1402,44 @@ int NES::ANDIX() { return AND(IndexedIndirectX); }
 int NES::ANDIY() { return AND(IndirectIndexedY); }
 
 
-int NES::ASL(const AddressingMode &mode) { int cycleTime = 2; return cycleTime; } //Shift Left One Bit(M or A)
+int NES::ASL(const AddressingMode &mode) { 
+	int cycleTime = 2;
+	uint16_t memoryLocation = NULL;
+	if (mode == Accumulator)
+	{
+		cpuRegistry.p.C = ((cpuRegistry.registry.A >> 7) & 0x01);
+		cpuRegistry.registry.A = (cpuRegistry.registry.A << 1);
+		SET_ZN(cpuRegistry.registry.A);
+	}
+	else
+	{
+		switch (mode)
+		{
+		case ZeroPage:
+			cycleTime = 5;
+			memoryLocation = getZeroPage_u8();
+			break;
+		case ZeroPageX:
+			cycleTime = 6;
+			memoryLocation = getZeroPage_u8('X');
+			break;
+		case Absolute:
+			cycleTime = 6;
+			memoryLocation = getAbsolute_u16();
+			break;
+		case AbsoluteX:
+			memoryLocation = getAbsolute_u16('X');
+			cycleTime = 7;
+			break;
+		}
+		 //required to be in a u16 slot
+		cpuRegistry.p.C = ((memory[memoryLocation] >> 7) & 0x01);
+		memory[memoryLocation] = (memory[memoryLocation] << 1);
+		SET_ZN(memory[memoryLocation]);
+	}
+
+	return cycleTime; 
+} //Shift Left One Bit(M or A)
 int NES::ASLACC() { return ASL(Accumulator); }
 int NES::ASLZP() { return ASL(ZeroPage); }
 int NES::ASLZPX() { return ASL(ZeroPageX); }
@@ -915,13 +1447,75 @@ int NES::ASLA() { return ASL(Absolute); }
 int NES::ASLAX() { return ASL(AbsoluteX); }
 
 
-int NES::BIT(const AddressingMode &mode) { int cycleTime = 2; return cycleTime; } //Test Bits in M with A
+int NES::BIT(const AddressingMode &mode) { 
+	int cycleTime = 2;
+	uint8_t M = NULL;
+
+	switch (mode)
+	{
+	case ZeroPage:
+		cycleTime = 3;
+		break;
+	case Absolute:
+		cycleTime = 4;
+		break;
+	}
+
+	uint8_t checksum = cpuRegistry.registry.A && M;
+	(checksum >> 7) & 1 ? SET_NEGATIVE() : UNSET_NEGATIVE(); //override standard negative check.
+	(checksum >> 6) & 1 ? SEV() : CLV(); //--unofficial set /w official clear.
+
+	return cycleTime; 
+} //Test Bits in M with A
 int NES::BITZP() { return BIT(ZeroPage); }
 int NES::BITA() { return BIT(Absolute); }
 
 
-int NES::EOR(const AddressingMode &mode) { int cycleTime = 2; return cycleTime; } //"Exclusive-Or" M with A
-int NES::EORI() { return EOR(Inmediate); }
+int NES::EOR(const AddressingMode &mode) { 
+	int cycleTime = 2;
+	uint8_t M = NULL;
+
+	switch (mode)
+	{
+	case ZeroPage:
+		cycleTime = 3;
+		M = getZeroPage_u8();
+		break;
+	case ZeroPageX:
+		cycleTime = 4;
+		M = getZeroPage_u8('X');
+		break;
+	case Absolute:
+		cycleTime = 4;
+		M = getAbsolute_u16();
+		break;
+	case AbsoluteX:
+		cycleTime = 4;
+		M = getAbsolute_u16('X');
+		break;
+	case AbsoluteY:
+		cycleTime = 4;
+		M = getAbsolute_u16('Y');
+		break;
+	case IndexedIndirectX:
+		cycleTime = 6;
+		M = getIndirectX_u8();
+		break;
+	case IndirectIndexedY:
+		cycleTime = 5;
+		M = getIndirectY_u8();
+		break;
+	default:
+		M = getImmeditate_u8();
+		break;
+	}
+
+	cpuRegistry.registry.A ^= M;
+
+	return cycleTime; 
+
+} //"Exclusive-Or" M with A
+int NES::EORI() { return EOR(Immediate); }
 int NES::EORZP() { return EOR(ZeroPage); }
 int NES::EORZPX() { return EOR(ZeroPageX); }
 int NES::EORA() { return EOR(Absolute); }
@@ -930,7 +1524,29 @@ int NES::EORAY() { return EOR(AbsoluteY); }
 int NES::EORIX() { return EOR(IndexedIndirectX); }
 int NES::EORIY() { return EOR(IndirectIndexedY); }
 
-int NES::LSR(const AddressingMode &mode) { int cycleTime = 2; return cycleTime; } //Shift Right One Bit(M or A)
+int NES::LSR(const AddressingMode &mode) { 
+	int cycleTime = 2; 
+
+	switch (mode)
+	{
+	case ZeroPage:
+		cycleTime = 5;
+		break;
+	case ZeroPageX:
+		cycleTime = 6;
+		break;
+	case Absolute:
+		cycleTime = 6;
+		break;
+	case AbsoluteX:
+		cycleTime = 7;
+		break;
+	case Accumulator:
+		break;
+	}
+
+	return cycleTime; 
+} //Shift Right One Bit(M or A)
 int NES::LSRACC() { return LSR(Accumulator); }
 int NES::LSRZP() { return LSR(ZeroPage); }
 int NES::LSRZPX() { return LSR(ZeroPageX); }
@@ -938,8 +1554,39 @@ int NES::LSRA() { return LSR(Absolute); }
 int NES::LSRAX() { return LSR(AbsoluteX); }
 
 
-int NES::ORA(const AddressingMode &mode) { int cycleTime = 2; return cycleTime; } //"OR" M with A
-int NES::ORAI() { return ORA(Inmediate); }
+int NES::ORA(const AddressingMode &mode) { 
+	int cycleTime = 2;
+
+	switch (mode)
+	{
+	case ZeroPage:
+		cycleTime = 3;
+		break;
+	case ZeroPageX:
+		cycleTime = 4;
+		break;
+	case Absolute:
+		cycleTime = 4;
+		break;
+	case AbsoluteX:
+		cycleTime = 4;
+		break;
+	case AbsoluteY:
+		cycleTime = 4;
+		break;
+	case IndexedIndirectX:
+		cycleTime = 6;
+		break;
+	case IndirectIndexedY:
+		cycleTime = 5;
+		break;
+	default:
+		break;
+	}
+
+	return cycleTime; 
+} //"OR" M with A
+int NES::ORAI() { return ORA(Immediate); }
 int NES::ORAZP() { return ORA(ZeroPage); }
 int NES::ORAZPX() { return ORA(ZeroPageX); }
 int NES::ORAA() { return ORA(Absolute); }
@@ -948,7 +1595,29 @@ int NES::ORAAY() { return ORA(AbsoluteY); }
 int NES::ORAIX() { return ORA(IndexedIndirectX); }
 int NES::ORAIY() { return ORA(IndirectIndexedY); }
 
-int NES::ROL(const AddressingMode &mode) { int cycleTime = 2; return cycleTime; } //Rotate One Bit Left(M or A)
+int NES::ROL(const AddressingMode &mode) { 
+	int cycleTime = 2; 
+
+	switch (mode)
+	{
+	case ZeroPage:
+		cycleTime = 5;
+		break;
+	case ZeroPageX:
+		cycleTime = 6;
+		break;
+	case Absolute:
+		cycleTime = 6;
+		break;
+	case AbsoluteX:
+		cycleTime = 7;
+		break;
+	case Accumulator:
+		break;
+	}
+
+	return cycleTime; 
+} //Rotate One Bit Left(M or A)
 int NES::ROLACC() { return ROL(Accumulator); }
 int NES::ROLZP() { return ROL(ZeroPage); }
 int NES::ROLZPX() { return ROL(ZeroPageX); }
@@ -956,7 +1625,29 @@ int NES::ROLA() { return ROL(Absolute); }
 int NES::ROLAX() { return ROL(AbsoluteX); }
 
 
-int NES::ROR(const AddressingMode &mode) { int cycleTime = 2; return cycleTime; } //Rotate One Bit Right(M or A)
+int NES::ROR(const AddressingMode &mode) { 
+	int cycleTime = 2;
+
+	switch (mode)
+	{
+	case ZeroPage:
+		cycleTime = 5;
+		break;
+	case ZeroPageX:
+		cycleTime = 6;
+		break;
+	case Absolute:
+		cycleTime = 6;
+		break;
+	case AbsoluteX:
+		cycleTime = 7;
+		break;
+	case Accumulator:
+		break;
+	}
+
+	return cycleTime;
+} //Rotate One Bit Right(M or A)
 int NES::RORACC() { return ROR(Accumulator); }
 int NES::RORZP() { return ROR(ZeroPage); }
 int NES::RORZPX() { return ROR(ZeroPageX); }
@@ -994,24 +1685,190 @@ int NES::BVS() { int cycleTime = 2; return cycleTime; }
 
 
 #pragma region Jump
-int NES::JMP(const AddressingMode &mode) { int cycleTime = 2; return cycleTime; } //Jump to Location
+int NES::JMP(const AddressingMode &mode) { 
+	int cycleTime = 2;
+	uint16_t PC = cpuRegistry.pc;
+	uint8_t PCl = fetch();
+	uint8_t PCh = 0x00;
+	uint16_t read = 0x0000;
+
+	switch (mode)
+	{
+	case Absolute:
+		cycleTime = 3;
+		PCh = fetch();
+#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+		read |= PCl;
+		read |= (PCh << 8);
+#else
+		read |= PCh;
+		read |= (PCl << 8);
+#endif
+		//pointerVal = fetch16();
+		break;
+	case Indirect:
+		cycleTime = 7;
+		PC |= (PC >> 8); //right shift low bytes away;
+		PC |= (PC << 8); //left shift low bytes to high;
+		cpuRegistry.pc = PC; //set temp pc based on high bytes;
+		PCh = fetch();
+
+#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+		read |= PCl;
+		read |= (PCh << 8);
+#else
+		read |= PCh;
+		read |= (PCl << 8);
+#endif
+
+		//TODO: Absolute-Indirect
+		break;
+	}
+
+	cpuRegistry.pc = read;
+
+	return cycleTime; 
+} //Jump to Location
 int NES::JMPA() { return JMP(Absolute); }
 int NES::JMPI() { return JMP(Indirect);  }
 
-int NES::JSR() { int cycleTime = 2; return cycleTime; } //Jump to Location Save Return Address						--ABSOLUTE
+int NES::JSR() {
+	int cycleTime = 2;
+	//check if you need to PUSH (PC+2) | (PC-1) and if it needs to be the PC on load - 1 / + 2 or after reading OP+1 & OP+2.
+	
+	uint16_t PC = cpuRegistry.pc;
+	uint8_t PCl = fetch();
+	uint8_t PCh = 0x00;
+	uint16_t read = 0x0000;
+
+	cycleTime = 3;
+	PCh = fetch();
+#if __BYTE_ORDER__ == __ORDER_LITTLE_ENDIAN__
+	read |= PCl;
+	read |= (PCh << 8);
+#else
+	read |= PCh;
+	read |= (PCl << 8);
+#endif
+
+	cpuRegistry.pc = read;
+	
+	return cycleTime; 
+} //Jump to Location Save Return Address						--ABSOLUTE
 int NES::RTI() { int cycleTime = 2; return cycleTime; } //Return from Interrupt										--Implied
 int NES::RTS() { int cycleTime = 2; return cycleTime; } //Return from Subroutine									--Implied
 #pragma endregion Jump
 
 
 #pragma region Registers
-int NES::CLC() { int cycleTime = 2; return cycleTime; } //Clear Carry Flag											--Implied
-int NES::CLD() { int cycleTime = 2; return cycleTime; } //Clear Decimal Mode										--Implied
-int NES::CLI() { int cycleTime = 2; return cycleTime; } //Clear interrupt Disable Bit								--Implied
-int NES::CLV() { int cycleTime = 2; return cycleTime; } //Clear Overflow Flag										--Implied
+int NES::CLC() { int cycleTime = 2; cpuRegistry.p.C = 0; return cycleTime; } //Clear Carry Flag											--Implied
+int NES::CLD() { int cycleTime = 2; cpuRegistry.p.D = 0; return cycleTime; } //Clear Decimal Mode										--Implied
+int NES::CLI() { int cycleTime = 2; cpuRegistry.p.I = 0; return cycleTime; } //Clear interrupt Disable Bit								--Implied
+int NES::CLV() { int cycleTime = 2; cpuRegistry.p.V = 0; return cycleTime; } //Clear Overflow Flag										--Implied
 
-int NES::CMP(const AddressingMode &mode) { int cycleTime = 2; return cycleTime; } //Compare M AND A
-int NES::CMPI() { return CMP(Inmediate); }
+int NES::CMP_ALL(const AddressingMode &mode, char registry)
+{
+	int cycleTime = 2;
+	uint8_t reg;
+	uint8_t M = NULL;
+	uint8_t result = 0xFF;
+
+	switch (registry)
+	{
+	case 'X':
+		reg = cpuRegistry.registry.X;
+		break;
+	case 'Y':
+		reg = cpuRegistry.registry.Y;
+		break;
+	case 'A':
+		reg = cpuRegistry.registry.A;
+		break;
+	}
+
+	switch (mode)
+	{
+	case ZeroPage:
+		cycleTime = 3;
+		break;
+	case ZeroPageX:
+		cycleTime = 4;
+		break;
+	case Absolute:
+		cycleTime = 4;
+		break;
+	case AbsoluteX:
+		cycleTime = 4;
+		break;
+	case AbsoluteY:
+		cycleTime = 4;
+		break;
+	case IndexedIndirectX:
+		cycleTime = 6;
+		break;
+	case IndirectIndexedY:
+		cycleTime = 5;
+		break;
+	default:
+		break;
+	}
+
+	(reg >= M) ? SEC() : CLC();
+	result = reg;
+	result -= M; //if result = 0 then Z is 1. Z is the comparers result.
+	SET_ZN(result);
+
+	return cycleTime;
+}
+
+/*int NES::CMP(const AddressingMode &mode) { 
+	int cycleTime = 2;
+	uint8_t A = cpuRegistry.registry.A;
+	uint8_t M = 0x00;
+
+	switch (mode)
+	{
+	case ZeroPage:
+		cycleTime = 3;
+		break;
+	case ZeroPageX:
+		cycleTime = 4;
+		break;
+	case Absolute:
+		cycleTime = 4;
+		break;
+	case AbsoluteX:
+		cycleTime = 4;
+		break;
+	case AbsoluteY:
+		cycleTime = 4;
+		break;
+	case IndexedIndirectX:
+		cycleTime = 6;
+		break;
+	case IndirectIndexedY:
+		cycleTime = 5;
+		break;
+	default:
+		break;
+	}
+
+
+
+	SET_ZERO(A - M);
+	SET_NEGATIVE((A == M));
+	if (A >= M)
+	{
+		SEC();
+	}
+	else {
+		CLC();
+	}
+
+	return cycleTime;
+} //Compare M AND A*/
+int NES::CMP(const AddressingMode &mode) { return CMP_ALL(mode, 'A'); }
+int NES::CMPI() { return CMP(Immediate); }
 int NES::CMPZP() { return CMP(ZeroPage); }
 int NES::CMPZPX() { return CMP(ZeroPageX); }
 int NES::CMPA() { return CMP(Absolute); }
@@ -1020,27 +1877,110 @@ int NES::CMPAY() { return CMP(AbsoluteY); }
 int NES::CMPIX() { return CMP(IndexedIndirectX); }
 int NES::CMPIY() { return CMP(IndirectIndexedY); }
 
-int NES::CPX(const AddressingMode &mode) { int cycleTime = 2; return cycleTime; } //Compare M and X
-int NES::CPXI() { return CPX(Inmediate); }
+/*int NES::CPX(const AddressingMode &mode) { 
+	int cycleTime = 2;
+	uint8_t X = cpuRegistry.registry.X;
+	uint8_t M = 0x00;
+
+	switch (mode)
+	{
+	case ZeroPage:
+		cycleTime = 3;
+		break;
+	case Absolute:
+		cycleTime = 4;
+		break;
+	default:
+		break;
+	}
+
+	SET_ZERO(!(X == M)); //if A is equal to M set zero to 1, if(equals) true = 1 but zero == 1 = 0, this is why we need to invert the boolean state.
+	SET_NEGATIVE((X == M));
+	if (X >= M)
+	{
+		SEC();
+	}
+	else {
+		CLC();
+	}
+
+	return cycleTime;
+} //Compare M and X*/
+int NES::CPX(const AddressingMode &mode) { return CMP_ALL(mode, 'X'); }
+int NES::CPXI() { return CPX(Immediate); }
 int NES::CPXZP() { return CPX(ZeroPage); }
 int NES::CPXA() { return CPX(Absolute); }
 
-int NES::CPY(const AddressingMode &mode) { int cycleTime = 2; return cycleTime; } //Compare M and Y
-int NES::CPYI() { return CPY(Inmediate); }
+/*int NES::CPY(const AddressingMode &mode) { 
+	int cycleTime = 2;
+	uint8_t Y = cpuRegistry.registry.Y;
+	uint8_t M = 0x00;
+
+	switch (mode)
+	{
+	case ZeroPage:
+		cycleTime = 3;
+		break;
+	case Absolute:
+		cycleTime = 4;
+		break;
+	default:
+		break;
+	}
+
+	SET_ZERO(!(Y == M)); //if A is equal to M set zero to 1, if(equals) true = 1 but zero == 1 = 0, this is why we need to invert the boolean state.
+	SET_NEGATIVE((Y == M));
+	if (Y >= M)
+	{
+		SEC();
+	}
+	else {
+		CLC();
+	}
+
+	return cycleTime;
+} //Compare M and Y*/
+int NES::CPY(const AddressingMode &mode) { return CMP_ALL(mode, 'Y'); }
+int NES::CPYI() { return CPY(Immediate); }
 int NES::CPYZP() { return CPY(ZeroPage); }
 int NES::CPYA() { return CPY(Absolute); }
 
-int NES::SEC() { int cycleTime = 2; return cycleTime; } //Set Carry Flag											--Implied
-int NES::SED() { int cycleTime = 2; return cycleTime; } //Set Decimal Mode											--Implied
-int NES::SEI() { int cycleTime = 2; return cycleTime; } //Set Interrupt Disable Status								--Implied
+int NES::SEC() { int cycleTime = 2; cpuRegistry.p.C = 1; return cycleTime; } //Set Carry Flag											--Implied
+int NES::SED() { int cycleTime = 2; cpuRegistry.p.D = 1; return cycleTime; } //Set Decimal Mode											--Implied
+int NES::SEI() { int cycleTime = 2; cpuRegistry.p.I = 1; return cycleTime; } //Set Interrupt Disable Status								--Implied
+int NES::SEV() { cpuRegistry.p.V = 1; return 0; } //Unofficial OP
 #pragma endregion Registers
 
 
 #pragma region Stack
-int NES::PHA() { int cycleTime = 2; return cycleTime; } //Push A on Stack											--Implied
-int NES::PHP() { int cycleTime = 2; return cycleTime; } //Push Processor Status on Stack							--Implied
-int NES::PLA() { int cycleTime = 2; return cycleTime; } //Pull A from Stack											--Implied
-int NES::PLP() { int cycleTime = 2; return cycleTime; } //Pull Processor Status from Stack							--Implied
+int NES::PHA() { 
+	int cycleTime = 3;
+
+	cpuRegistry.sp = cpuRegistry.registry.A;
+
+	return cycleTime; 
+} //Push A on Stack											--Implied
+int NES::PHP() { 
+	int cycleTime = 3; 
+
+	cpuRegistry.sp = cpuRegistry.pc;
+
+	return cycleTime; 
+} //Push Processor Status on Stack							--Implied
+int NES::PLA() { 
+	int cycleTime = 4; 
+
+	cpuRegistry.registry.A = cpuRegistry.sp;
+
+	return cycleTime; 
+} //Pull A from Stack											--Implied
+int NES::PLP() { 
+	int cycleTime = 4; 
+
+	cpuRegistry.pc = cpuRegistry.sp;
+
+	return cycleTime; 
+} //Pull Processor Status from Stack							--Implied
 #pragma endregion Stack
 
 
