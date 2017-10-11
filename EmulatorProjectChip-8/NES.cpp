@@ -17,8 +17,6 @@ const uint8_t& NES::read(const uint16_t &address)
 	return memory[address];
 }
 
-
-
 void NES::emulateCycle()
 {
 	int pc = cpuRegistry.pc;
