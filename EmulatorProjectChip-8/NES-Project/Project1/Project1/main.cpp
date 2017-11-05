@@ -69,8 +69,13 @@ void Run()
 	}
 }
 
+
 int main(int argc, char **argv)
 {
+	uint16_t a = 0xFFFF;
+	uint16_t b = 0x01ea;
+	uint16_t c = (a & 0xFF00) + uint8_t(b);
+
 	char buffer[256];
 	char* path;
 	settings = new Settings();
@@ -82,7 +87,7 @@ int main(int argc, char **argv)
 	}
 	else
 	{
-		path = "E:\\Github\\EmulatorProjectChip-8\\ROMS\\BRIX";
+		path = "E:\\Github\\EmulatorProjectChip-8\\ROMS\\BROS.nes";
 	}
 
 	printf("ROM Path: %s\n", path);

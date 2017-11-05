@@ -4,13 +4,5 @@ e:\github\emulatorprojectchip-8\emulatorprojectchip-8\nes-project\project1\proje
   c:\program files (x86)\windows kits\8.1\include\shared\minwindef.h(75): note: see previous definition of 'TRUE'
 e:\github\emulatorprojectchip-8\emulatorprojectchip-8\nes-project\project1\project1\type.h(6): warning C4005: 'FALSE': macro redefinition
   c:\program files (x86)\windows kits\8.1\include\shared\minwindef.h(71): note: see previous definition of 'FALSE'
-  CPU.cpp
-e:\github\emulatorprojectchip-8\emulatorprojectchip-8\nes-project\project1\project1\cpu.cpp(56): warning C4554: '>>': check operator precedence for possible error; use parentheses to clarify precedence
-e:\github\emulatorprojectchip-8\emulatorprojectchip-8\nes-project\project1\project1\cpu.cpp(105): warning C4800: 'int': forcing value to bool 'true' or 'false' (performance warning)
-e:\github\emulatorprojectchip-8\emulatorprojectchip-8\nes-project\project1\project1\cpu.cpp(108): warning C4800: 'int': forcing value to bool 'true' or 'false' (performance warning)
-e:\github\emulatorprojectchip-8\emulatorprojectchip-8\nes-project\project1\project1\cpu.cpp(110): warning C4800: 'int': forcing value to bool 'true' or 'false' (performance warning)
-e:\github\emulatorprojectchip-8\emulatorprojectchip-8\nes-project\project1\project1\cpu.cpp(117): warning C4800: 'int': forcing value to bool 'true' or 'false' (performance warning)
-e:\github\emulatorprojectchip-8\emulatorprojectchip-8\nes-project\project1\project1\cpu.cpp(118): warning C4800: 'int': forcing value to bool 'true' or 'false' (performance warning)
-  Generating Code...
   Project1.vcxproj -> E:\Github\EmulatorProjectChip-8\EmulatorProjectChip-8\NES-Project\Project1\Debug\NES.exe
   Project1.vcxproj -> E:\Github\EmulatorProjectChip-8\EmulatorProjectChip-8\NES-Project\Project1\Debug\NES.pdb (Partial PDB)
