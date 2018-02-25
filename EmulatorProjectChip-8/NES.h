@@ -86,6 +86,7 @@ public:
 			int prgSize; //CPU space allocation
 			uint16_t chrLocation; //PPU start
 			int chrSize; //PPU space allocation
+			int Mapper; //iNES Mapper
 		};
 	};
 
@@ -180,8 +181,8 @@ private:
 	void NES::InitilizeOpCodeTable();
 	uint8_t NES::decodeOPCode(const uint8_t &opcode);
 
-	int_ptr NESOpCodeTable[255];
-	char* NESOpCodeTableNames[255];
+	int_ptr NESOpCodeTable[256];
+	char* NESOpCodeTableNames[256];
 
 	//OP
 #pragma region Storage

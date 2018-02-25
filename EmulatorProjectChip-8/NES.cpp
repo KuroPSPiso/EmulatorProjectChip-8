@@ -19,12 +19,13 @@ const uint8_t& NES::read(const uint16_t &address)
 
 void NES::emulateCycle()
 {
-	int pc = cpuRegistry.pc;
+	uint16_t pc = cpuRegistry.pc;
 	opcode = fetch();
 
 	printf(NESOpCodeTableNames[opcode]);//TODO: remove this
 
-	int cycleTime = decodeOPCode(opcode);
+		uint16_t cycleTime = decodeOPCode(opcode);
+	//cpuRegistry.pc = pc + cycleTime;
 
 	if(
 		opcode != 0x28 &&
@@ -33,14 +34,20 @@ void NES::emulateCycle()
 		opcode != 0x20
 	) //PLP, //BRK, //JMP, //JSR (opcode will be changed within the methods)
 	cpuRegistry.pc = pc + cycleTime;
-
 }
 
 void NES::RESET()
 {
 	NES::InitilizeOpCodeTable();
 
-	cpuRegistry.sp = 0x01FF;
+	for (int i = 0x0000; i < 0x401F; i+=0x0001) //clear data up until end of instrument instructions.
+	{
+		memory[i] = NULL; //cleared bit
+	}
+
+	cpuRegistry.sp = 0x01FF; //reset stackpointer
+	cpuRegistry.pc = 0xFFFC; //reset pc
+	cpuRegistry.pc = fetch16(); //load pc location
 }
 
 int NES::powerUpSequence()
@@ -87,10 +94,9 @@ int NES::powerUpSequence()
 	int NESv2Format = 0;
 	int VS = ((flag7 >> 0) & 1);
 	int Region1 = 0;
-	for (int n = 4; n < 7; n++)
-	{
-	//Four lower bits of ROM Mapper Type.
-	}
+	int Mapper = 0;
+
+	Mapper &= ((flag6 >> 4));
 
 	for (int n = 1; n < 7; n++)
 	{
@@ -101,11 +107,12 @@ int NES::powerUpSequence()
 				NESv2Format = ((flag7 >> n) & 1) + ((flag7 >> n + 1) & 1);
 			}
 		}
-		else if (n >= 4 && n <= 7) //Four higher bits of ROM Mapper Type.
-		{
-
-		}
+		//else if (n >= 4 && n <= 7) //Four higher bits of ROM Mapper Type.
+		//{
+		//	Mapper &= ((flag6 >> n) & 1);
+		//}
 	}
+	Mapper &= ((flag7 >> 4)) << 4;
 
 	for (int n = 0; n < 7; n++)
 	{
@@ -161,13 +168,13 @@ int NES::powerUpSequence()
 	cpuRegistry.systemBehaviour.Region1 = Region1;
 	cpuRegistry.systemBehaviour.Trainer = Trainer;
 	cpuRegistry.systemBehaviour.VS = VS;
+	cpuRegistry.systemBehaviour.Mapper = Mapper;
 
 	return validCartridge;
 }
 
 bool NES::loadApplication(const char * filename)
 {
-	RESET();
 	//open file
 	FILE* appFile;
 	errno_t err;
@@ -238,15 +245,43 @@ bool NES::loadApplication(const char * filename)
 
 		if (powerUpSequence() == 1)
 		{
-			for (int i = 0; i < sizeof(cartridge); i++)
+			//Load memory
+			int indexOfMemory = 0x0010; //start position in iNES rom.
+
+			//Load PRG ROM Banks
+			switch (cpuRegistry.systemBehaviour.Mapper)
 			{
-				memory[/*0x4000 **/ i] = cartridge[i];
+			case 0: //NROM MAPPER
+				if (cpuRegistry.systemBehaviour.numberOf16KRomBanks == 1)
+				{
+					for (int i = 0x0000; i < 0x4000; i += 0x0001)
+					{
+						//insert prg bank #1
+						memory[0x8000 + i] = cartridge[i + indexOfMemory];
+						//insert clone of prg bank #1
+						memory[0xC000 + i] = memory[0x8000 + i];
+					}
+				}
+				else
+				{
+					for (int i = 0x0000; i < 0x4000; i += 0x0001)
+					{
+						//insert prg bank #1
+						memory[0x8000 + i] = cartridge[i + indexOfMemory];
+						//insert prg bank #2
+						memory[0xC000 + i] = cartridge[i + 0x4000 + indexOfMemory];
+					}
+				}
+				break;
 			}
 
-			//set pc to 0x8000 (expected)
-			cpuRegistry.pc = cpuRegistry.systemBehaviour.prgLocation;
-			//exec jmp first time for allocating the correct start pos (?)
-			JMPI();
+			//Load CHR ROM Bank
+			switch (cpuRegistry.systemBehaviour.Mapper)
+			{
+			case 0: //NROM MAPPER
+				cpuRegistry.systemBehaviour.numberOf8KVRomBanks;
+				break;
+			}
 		}
 	}
 	else
@@ -591,9 +626,10 @@ uint8_t NES::decodeOPCode(const uint8_t &opcode)
 void NES::InitilizeOpCodeTable()
 {
 	//everycommand is either no operation or returns combining opcode.
-	for (int i = 0x00; i < 0xFF; i++)
+	for (int i = 0x00; i <= 0xFF; i++)
 	{
 		NESOpCodeTable[i] = &NES::NOP;
+		NESOpCodeTableNames[i] = "NOP";
 	}
 
 #pragma region OPCODE TABLE
@@ -1985,7 +2021,7 @@ int NES::PLP() {
 #pragma region Interrupts
 int NES::NOP() { return 2; }		//No Operation											--Implied
 int NES::NMI() { return 0; }		//Non-Maskable Intteruption
-int NES::Reset() { return 0; }	//Reset
+int NES::Reset() { return 0; }		//Reset
 int NES::IRQ() { return 0; }		//Interrupt Request
 int NES::BRK() { return 7; }		//Break													--Implied
 #pragma endregion

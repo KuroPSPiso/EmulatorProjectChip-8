@@ -44,6 +44,7 @@ int main(int argc, char **argv)
 		
 		char buffer[256];
 		printf("Select a machine to boot:\n\t1)\tChip-8\n\t2)\tGameBoy (W.I.P.)\n\t3)\tNES (W.I.P.)");
+		printf("\n\n");
 		printf("Enter a number: ");
 		fgets(buffer, 256, stdin);
 

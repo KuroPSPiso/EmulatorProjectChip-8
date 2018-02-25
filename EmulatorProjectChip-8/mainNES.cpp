@@ -83,7 +83,7 @@ void mainNES::loadApplication()
 	std::string s;
 	std::getline(std::cin, s);
 	s = path2 + s;
-	__NES.loadApplication(s.c_str()); //chip8 compatible code project
+	__NES.loadApplication(s.c_str()); //currently only supports iNES
 
 	free(workingpath);
 }
@@ -100,11 +100,10 @@ mainNES::mainNES(int argc, char **argv)
 
 int mainNES::run()
 {
-	__NES.RESET();
 	loadApplication();
 	setupGraphics();
 	system("cls");
-	//__NES.RESET();
+	__NES.RESET();
 
 	// System emulation
 	for (;;)
